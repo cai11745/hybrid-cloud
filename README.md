@@ -1,5 +1,4 @@
-# Introduction
-# Kubernetes & Openshift yaml 解读
+## Kubernetes & Openshift yaml 解读
 
 ### [阅读地址](https://misa.gitbook.io/k8s-ocp-yaml/)
 

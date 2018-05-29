@@ -2,6 +2,10 @@
 
 * [简介](README.md)
 
+### 书写注意项
+
+* [yaml文件来源与导入导出](2018-05-29-yaml-from+write-note.md)
+* [文件包含多资源对象写法](2018-05-29-multi-kind-list.md)
 
 ### 应用(deployment,rc,rs)
 
