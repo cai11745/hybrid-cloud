@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Introduction
 # Kubernetes & Openshift yaml 解读
 
@@ -26,3 +27,7 @@
 
 
 
+=======
+# k8s-ocp-yaml
+kubernetes &amp; openshift yaml
+>>>>>>> 19dd1a281860aabdbf95e4f209965c69240f48d8
