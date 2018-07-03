@@ -1,26 +1,21 @@
-# Summary
-
 * [简介](README.md)
 
-##书写注意项
+* [书写注意项]
+  * [yaml文件来源](2018-05-29-yaml-from+write-note.md)
+  * [多资源对象写法](2018-05-29-multi-kind-list.md)
 
-* [yaml文件来源](2018-05-29-yaml-from+write-note.md)
-* [多资源对象写法](2018-05-29-multi-kind-list.md)
+* [应用(deployment,rc,rs)]
+  * [deployment，rc,rs](application/2018-05-31-deployment.-rc-rs.md)
+    * [volumeMounts,volumes](part1/gitbook.md)
+  * [rc](part1/gitbook.md)
+  * [Daemonset](part1/gitbook.md)
 
-## 应用(deployment,rc,rs)
-
-* [deployment](part1/writing.md)
-  * [GitBook is nice](part1/gitbook.md)  
-* [rc](part1/gitbook.md)
-* [Daemonset](part1/gitbook.md)
-
-## 存储
+* [存储(pv,pvc)]
 
 
-## Openshift
-
-* [route](part2/feedback_please.md)
-* [template](part2/better_tools.md)
+* [Openshift]
+  * [route](part2/feedback_please.md)
+  * [template](part2/better_tools.md)
 
 ----
 

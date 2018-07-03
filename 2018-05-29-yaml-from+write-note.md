@@ -82,6 +82,7 @@ openshift 带有一个 export 命令可以导出资源
 
 如上，写了两个 volumeMounts: 上面那个会失效，而且创建的时候不会报错。 
 
+可以参考 应用 volume 的写法。
 
 ### 标签 label
 

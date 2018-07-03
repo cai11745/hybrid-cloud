@@ -7,7 +7,7 @@
 deployment 文件
 
 ```
-kubectl run tomcat11 --image=tomcat:8.5 --replicas=2 --port=8080 --dry-run -o yaml > deploy.yaml
+kubectl run tomcat11 --image=registry.cn-hangzhou.aliyuncs.com/misa/tomcat:9.0 --replicas=2 --port=8080 --dry-run -o yaml > deploy.yaml
 
 [root@master1 feng]# cat deploy.yaml 
 apiVersion: extensions/v1beta1
@@ -30,7 +30,7 @@ spec:
         run: tomcat11
     spec:
       containers:
-      - image: tomcat:8.5
+      - image: registry.cn-hangzhou.aliyuncs.com/misa/tomcat:9.0
         name: tomcat11
         ports:
         - containerPort: 8080
@@ -127,7 +127,7 @@ items:
           run: tomcat11
       spec:
         containers:
-        - image: tomcat:8.5
+        - image: registry.cn-hangzhou.aliyuncs.com/misa/tomcat:9.0
           name: tomcat11
           ports:
           - containerPort: 8080
