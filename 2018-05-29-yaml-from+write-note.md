@@ -1,3 +1,5 @@
+# yaml 文件导入导出与书写规则
+
 为什么采用yaml，视觉上更直观，但是必须处理好缩进/对齐。
 
 通过 yaml 文件创建应用等资源，最好基于已有的文件修改，不要自己手动书写，容易出错。下面介绍 yaml 文件的常用查询途径及导入导出方法。
@@ -19,9 +21,9 @@ openshift 是红帽redhat基于kubernetes的二次开发版本，在部署方案
 
 ### kubectl 命令
 
-通过命令，只输出 deployment 文件，不创建 
+通过命令，只输出 deployment 文件，不创建
 
-```
+```bash
 [root@master1 ~]# kubectl run tomcat11 --image=tomcat:8.5 --replicas=2 --port=8080 --dry-run -o yaml
 
 tomcat11 为deployment 名称
@@ -34,11 +36,11 @@ tomcat11 为deployment 名称
 
 注意： 如果是openshift 环境, oc run 命令生成的是deploymentconfig，即dc。 如果 deployment 可以用 kubectl 命令
 
-
 ### 通过已有资源导出
 
-kubernetes 
-```
+kubernetes
+
+```bash
 root@instance-1:~# kubectl get deployment tomtest -o yaml
 
 把无用的一些状态信息删掉
@@ -48,12 +50,11 @@ openshift
 
 openshift 带有一个 export 命令可以导出资源
 
-```
+```bash
 [root@master ~]# oc export svc np-31006 -o yaml
 ```
 
 但是比如svc，导出会把 nodeport 的信息给丢了。。。 - -!
-
 
 ## yaml 书写注意项
 
@@ -69,7 +70,7 @@ openshift 带有一个 export 命令可以导出资源
 
  ports，volumeMounts，volumes、env、securityContext等，有多个子项的时候。以上参数只能出现一次。 比如
 
- ```
+ ```bash
  错误示例：
           volumeMounts:
           - mountPath: /home/netbank/share
@@ -80,7 +81,7 @@ openshift 带有一个 export 命令可以导出资源
 
  ```
 
-如上，写了两个 volumeMounts: 上面那个会失效，而且创建的时候不会报错。 
+如上，写了两个 volumeMounts: 上面那个会失效，而且创建的时候不会报错。
 
 可以参考 应用 volume 的写法。
 
@@ -91,4 +92,3 @@ openshift 带有一个 export 命令可以导出资源
 ### 带namespace
 
 这一条没那么重要，但是在比较正式的环境，一些非全局的资源，比如rc，svc，pvc。最好在文件定义好namespace。防止在执行命令kubectl/oc create -f 的时候所在的project不对，导致一些异常。
-

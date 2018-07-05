@@ -1,7 +1,6 @@
-## Kubernetes & Openshift yaml 解读
+# Kubernetes & Openshift yaml 解读
 
-### [阅读地址](https://misa.gitbook.io/k8s-ocp-yaml/)
-
+## [阅读地址](https://misa.gitbook.io/k8s-ocp-yaml/)
 
 * 记录在学习及项目实施中用到的k8s及openshift yaml文件，做一些解读。
 * 不对应用资源做过多解释。
@@ -11,14 +10,13 @@
 
 ---
 
-### 联系方式
+## 联系方式
+
 * ID  : 老菜 misa
 * 邮箱: 3162003@qq.com
-* 微信: 
+* 微信:
 * QQ  : 3162003
 
 任何问题都欢迎直接联系
 
 欢迎提issue及合作补充文档
-
-

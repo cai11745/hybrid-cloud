@@ -1,3 +1,5 @@
+# deployment（pod控制器）
+
 deployment 针对无状态服务， 为当前最常用的 pod 控制器，可以实现滚动升级与回滚。
 
 Replica Set 用来取代 Replication Controller， ReplicaSet支持集合式的selector。
@@ -10,8 +12,7 @@ Replica Set 和 Replication Controller 的写法与 deployment 类似，以下�
 
 注意层级，比如  image ports resources 为同一级， 若吧 volume 插入到 port 下面，会导致 port 参数失效。
 
-
-```
+```bash
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -30,7 +31,7 @@ spec:
     spec:
       containers:  # 容器属性
       - image: registry.cn-hangzhou.aliyuncs.com/misa/tomcat:9.0
-        name: tomcat11   
+        name: tomcat11
         ports:
         - containerPort: 8080
           name: port8080   # 多 port 情况下，要写 name 以区分
@@ -38,19 +39,17 @@ spec:
           name: port8090  
         resources:   # 资源限制
           requests:  
-            cpu: 200m 
+            cpu: 200m
             memory: 200M
-          limits: 
+          limits:
             cpu: 400m
             memory: 400M
         volumeMounts:
         - mountPath: /tmp
-          name: tmp-vol    
+          name: tmp-vol
       volumes:
       - name: tmp-vol
         hostPath:
           path: /tmp
-    
+
 ```
-
-

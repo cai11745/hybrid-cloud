@@ -5,8 +5,8 @@
   * [多资源对象写法](2018-05-29-multi-kind-list.md)
 
 * [应用(deployment,rc,rs)]
-  * [deployment，rc,rs](application/2018-05-31-deployment.-rc-rs.md)
-    * [volumeMounts,volumes](part1/gitbook.md)
+  * [deployment，rc,rs控制器](application/2018-05-31-deployment-rc-rs.md)
+  * [volume 容器存储](application/2018-05-31-deployment-volume.md)
   * [rc](part1/gitbook.md)
   * [Daemonset](part1/gitbook.md)
 
