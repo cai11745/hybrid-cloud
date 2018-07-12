@@ -158,7 +158,7 @@ spec:
 可以进入到容器 df -h 中查看
 
 ```bash
-root@master1:~/yaml-new/application# kubectl create -f deployment-volume-nfs.yaml 
+root@master1:~/yaml-new/application# kubectl create -f deployment-volume-nfs.yaml
 deployment.extensions "tom-nfs" created
 
 root@master1:~/yaml-new/application# kubectl exec -it tom-nfs-5549849fc6-vsjdb bash
@@ -210,7 +210,7 @@ spec:
     spec:
       nodeSelector:
         hostpath: "yes"
-      containers: 
+      containers:
       - image: registry.cn-hangzhou.aliyuncs.com/misa/tomcat:9.0
         name: tom-hostpath  
         ports:
@@ -228,7 +228,7 @@ spec:
 chcon -Rt svirt_sandbox_file_t /tmp/test-hostpath
 
 # 创建应用
-root@master1:~/k8s-oc-yaml/application# kubectl create -f deployment-volume-hostpath.yaml 
+root@master1:~/k8s-oc-yaml/application# kubectl create -f deployment-volume-hostpath.yaml
 deployment.extensions "tom-hostpath" created
 
 # node1 查看文件, /tmp/test-hostpath 目录如果之前没有，会自动创建
@@ -248,7 +248,7 @@ catalina.2018-07-03.log  host-manager.2018-07-03.log  localhost.2018-07-03.log	l
 但是 pod 中的容器崩溃，或者重启， emptydir 中的数据不会丢失。
 
 ```bash
-root@master1:~/k8s-oc-yaml/application# cat deployment-volume-emptydir.yaml 
+root@master1:~/k8s-oc-yaml/application# cat deployment-volume-emptydir.yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -274,7 +274,7 @@ spec:
         emptyDir: {}
 
 # 创建应用
-root@master1:~/k8s-oc-yaml/application# kubectl create -f deployment-volume-emptydir.yaml 
+root@master1:~/k8s-oc-yaml/application# kubectl create -f deployment-volume-emptydir.yaml
 deployment.extensions "tom-emptydir" created
 
 root@master1:~/k8s-oc-yaml/application# kubectl get pod -owide
@@ -295,7 +295,7 @@ tom-emptydir-7f7d5c875f-fqrkc   1/1       Running   1          2m        10.244.
 
 # 进入容器，之前写入的文件还存在。 注意这是容器重启，不是 pod 删了重建，pod 重建数据还是会丢失。
 root@master1:~/k8s-oc-yaml/application# kubectl exec -it tom-emptydir-7f7d5c875f-fqrkc bash
-root@tom-emptydir-7f7d5c875f-fqrkc:/usr/local/tomcat# cat logs/testfile 
+root@tom-emptydir-7f7d5c875f-fqrkc:/usr/local/tomcat# cat logs/testfile
 Thu Jul  5 07:55:50 UTC 2018
 
 ```
