@@ -20,14 +20,17 @@
   * [template](part2/better_tools.md)
 
 * [kubernetes部署]
-  * [route](part2/feedback_please.md)
-  * [template](part2/better_tools.md)
+  * [kubernetes1.10 install offline](kubernetes-docs/2018-04-07-kubernetes-1.10-install-offline.md)
+  * [kubernetes1.9 install online](kubernetes-docs/2018-04-02-kubernetes-1.9-install-online.md)
+  * [kubernetes1.9 HA install online](kubernetes-docs/2018-04-04-kubernetes-1.9-HA-install-online.md)
+  * [helm install](kubernetes-docs/2018-05-02-install-helm.md)
 
 * [docker相关文档]
-  * [route](part2/feedback_please.md)
-  * [template](part2/better_tools.md)
+  * [dockerfile 书写注意](docker-docs/2017-08-10-dockerfile-notes.md)
+  * [dockerfile examples](docker-docs/2017-08-10-dockerfile-examples.md)
+  * [dockerfile 命令](docker-docs/2017-07-19-dockerfile-command.md)
 
-  * [openshift相关]
+* [openshift相关]
   * [route](part2/feedback_please.md)
   * [template](part2/better_tools.md)
 ----
