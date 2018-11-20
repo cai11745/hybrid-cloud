@@ -5,7 +5,7 @@
   * [多资源对象写法](2018-05-29-multi-kind-list.md)
 
 * [应用(deployment,rc,rs)]
-  * [deployment，rc,rs控制器](application/2018-05-31-deployment-rc-rs.md)
+  * [deployment,rc,rs控制器](application/2018-05-31-deployment-rc-rs.md)
   * [volume 容器存储](application/2018-05-31-volume.md)
   * [liveness readiness 健康检查](application/2018-07-05-livemess-readiness.md)
   
@@ -15,10 +15,21 @@
 * [存储(pv,pvc)]
 
 
-* [Openshift]
+* [Openshift独有resource]
   * [route](part2/feedback_please.md)
   * [template](part2/better_tools.md)
 
+* [kubernetes部署]
+  * [route](part2/feedback_please.md)
+  * [template](part2/better_tools.md)
+
+* [docker相关文档]
+  * [route](part2/feedback_please.md)
+  * [template](part2/better_tools.md)
+
+  * [openshift相关]
+  * [route](part2/feedback_please.md)
+  * [template](part2/better_tools.md)
 ----
 
 * [Last part without title](part3/title.md)

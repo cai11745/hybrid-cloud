@@ -1,12 +1,12 @@
-# Kubernetes & Openshift yaml 解读
+# Kubernetes & Openshift yaml 解读 及部署实施
 
 ## [阅读地址](https://misa.gitbook.io/k8s-ocp-yaml/)
 
-* 记录在学习及项目实施中用到的k8s及openshift yaml文件，做一些解读。
+* 记录在学习及项目实施中用到的k8s及openshift yaml文件，做一些解读。 及部署实施记录。
 * 不对应用资源做过多解释。
 * gitbook页面有搜索，可以快速定位到自己需要的内容。
 * [Github托管地址](https://github.com/cai11745/k8s-ocp-yaml)
-* [个人博客](http://misa86.cn)
+* [个人博客](http://misa86.cn) 停更
 
 ---
 
