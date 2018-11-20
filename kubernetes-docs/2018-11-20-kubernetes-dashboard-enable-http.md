@@ -81,5 +81,5 @@ https://raw.githubusercontent.com/cai11745/k8s-ocp-yaml/master/yaml-file/kuberne
 
 通过节点ip：32000 访问
 
-![k8s-dashboard.jpg]../image/k8s-dashboard.jpg "Optional title") 
+![k8s-dashboard.jpg](../image/k8s-dashboard.jpg "Optional title") 
 
