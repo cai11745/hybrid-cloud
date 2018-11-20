@@ -1,4 +1,4 @@
-# Kubernetes & Openshift yaml 解读 及部署实施
+# Kubernetes & Openshift yaml 解读 及部署实施记录
 
 ## [阅读地址](https://misa.gitbook.io/k8s-ocp-yaml/)
 
@@ -17,6 +17,4 @@
 * 微信:
 * QQ  : 3162003
 
-任何问题都欢迎直接联系
-
-欢迎提issue及合作补充文档
+有问题可以联系我或者github提issue
