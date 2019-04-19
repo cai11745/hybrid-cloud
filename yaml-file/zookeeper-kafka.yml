@@ -1,0 +1,390 @@
+---
+# Source: kafka/charts/zookeeper/templates/service-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-zookeeper-headless
+  labels:
+    app: zookeeper
+    chart: zookeeper-1.2.0
+    release: kafka
+    heritage: Tiller
+spec:
+  clusterIP: None
+  ports:
+    - name: client
+      port: 2181
+      targetPort: 
+      protocol: TCP
+    - name: election
+      port: 3888
+      targetPort: 
+      protocol: TCP
+    - name: server
+      port: 2888
+      targetPort: 
+      protocol: TCP
+  selector:
+    app: zookeeper
+    release: kafka
+
+---
+# Source: kafka/charts/zookeeper/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-zookeeper
+  labels:
+    app: zookeeper
+    chart: zookeeper-1.2.0
+    release: kafka
+    heritage: Tiller
+  annotations:
+spec:
+  type: ClusterIP
+  ports:
+    - name: client
+      port: 2181
+      protocol: TCP
+      targetPort: client
+      
+  selector:
+    app: zookeeper
+    release: kafka
+
+---
+# Source: kafka/templates/service-brokers.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  labels:
+    app: kafka
+    chart: kafka-0.13.3
+    release: kafka
+    heritage: Tiller
+spec:
+  ports:
+  - name: broker
+    port: 9092
+    targetPort: kafka
+  selector:
+    app: kafka
+    release: kafka
+---
+
+---
+# Source: kafka/templates/service-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-headless
+  labels:
+    app: kafka
+    chart: kafka-0.13.3
+    release: kafka
+    heritage: Tiller
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  ports:
+  - name: broker
+    port: 9092
+  clusterIP: None
+  selector:
+    app: kafka
+    release: kafka
+
+---
+# Source: kafka/templates/tests/test_topic_create_consume_produce.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "kafka-test-topic-create-consume-produce"
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+  - name: kafka-test-consume
+    image: map[pullPolicy:IfNotPresent repository:gcr.io/google_samples/k8szk tag:v3]:5.0.1
+    command:
+    - sh
+    - -c
+    - |
+      # Create the topic
+      kafka-topics --zookeeper kafka-zookeeper:2181 --topic helm-test-topic-create-consume-produce --create --partitions 1 --replication-factor 1 --if-not-exists && \
+      # Create a message
+      MESSAGE="`date -u`" && \
+      # Produce a test message to the topic
+      echo "$MESSAGE" | kafka-console-producer --broker-list kafka:9092 --topic helm-test-topic-create-consume-produce && \
+      # Consume a test message from the topic
+      kafka-console-consumer --bootstrap-server kafka-headless:9092 --topic helm-test-topic-create-consume-produce --from-beginning --timeout-ms 2000 --max-messages 1 | grep "$MESSAGE"
+  restartPolicy: Never
+
+---
+# Source: kafka/charts/zookeeper/templates/statefulset.yaml
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: kafka-zookeeper
+  labels:
+    app: zookeeper
+    chart: zookeeper-1.2.0
+    release: kafka
+    heritage: Tiller
+    component: server
+spec:
+  serviceName: kafka-zookeeper-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: zookeeper
+      release: kafka
+      component: server
+  updateStrategy:
+    type: OnDelete
+    
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+        release: kafka
+        component: server
+      annotations:
+    spec:
+      terminationGracePeriodSeconds: 1800
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        
+      containers:
+
+        - name: zookeeper
+          image: "gcr.io/google_samples/k8szk:v3"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - -xec
+            - zkGenConfig.sh && exec zkServer.sh start-foreground
+          ports:
+            - name: client
+              containerPort: 2181
+              protocol: TCP
+              
+            - name: election
+              containerPort: 3888
+              protocol: TCP
+              
+            - name: server
+              containerPort: 2888
+              protocol: TCP
+              
+          livenessProbe:
+            exec:
+              command:
+              - zkOk.sh
+            initialDelaySeconds: 20
+            
+          readinessProbe:
+            exec:
+              command:
+              - zkOk.sh
+            initialDelaySeconds: 20
+            
+          env:
+            - name: ZK_REPLICAS
+              value: "3"
+            - name: JMXAUTH
+              value: "false"
+            - name: JMXDISABLE
+              value: "false"
+            - name: JMXPORT
+              value: "1099"
+            - name: JMXSSL
+              value: "false"
+            - name: ZK_CLIENT_PORT
+              value: "2181"
+            - name: ZK_ELECTION_PORT
+              value: "3888"
+            - name: ZK_HEAP_SIZE
+              value: "1G"
+            - name: ZK_INIT_LIMIT
+              value: "5"
+            - name: ZK_LOG_LEVEL
+              value: "INFO"
+            - name: ZK_MAX_CLIENT_CNXNS
+              value: "60"
+            - name: ZK_MAX_SESSION_TIMEOUT
+              value: "40000"
+            - name: ZK_MIN_SESSION_TIMEOUT
+              value: "4000"
+            - name: ZK_PURGE_INTERVAL
+              value: "0"
+            - name: ZK_SERVER_PORT
+              value: "2888"
+            - name: ZK_SNAP_RETAIN_COUNT
+              value: "3"
+            - name: ZK_SYNC_LIMIT
+              value: "10"
+            - name: ZK_TICK_TIME
+              value: "2000"
+          resources:
+            {}
+            
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/zookeeper
+      volumes:
+        - name: data
+          emptyDir: {}
+
+---
+# Source: kafka/templates/statefulset.yaml
+
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: kafka
+  labels:
+    app: kafka
+    chart: kafka-0.13.3
+    release: kafka
+    heritage: Tiller
+spec:
+  serviceName: kafka-headless
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: OnDelete
+    
+  replicas: 3
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: kafka
+        release: kafka
+    spec:
+      containers:
+      - name: kafka-broker
+        image: "map[pullPolicy:IfNotPresent repository:gcr.io/google_samples/k8szk tag:v3]:5.0.1"
+        imagePullPolicy: "IfNotPresent"
+        livenessProbe:
+          exec:
+            command:
+              - sh
+              - -ec
+              - /usr/bin/jps | /bin/grep -q SupportedKafka
+          initialDelaySeconds: 20
+          timeoutSeconds: 5
+        readinessProbe:
+          tcpSocket:
+            port: kafka
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        ports:
+        - containerPort: 9092
+          name: kafka
+        resources:
+          {}
+          
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: KAFKA_HEAP_OPTS
+          value: -Xmx1G -Xms1G
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: "kafka-zookeeper:2181"
+        - name: KAFKA_LOG_DIRS
+          value: "/opt/kafka/data/logs"
+        - name: "KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE"
+          value: "false"
+        - name: "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR"
+          value: "3"
+        - name: KAFKA_JMX_PORT
+          value: "5555"
+        # This is required because the Downward API does not yet support identification of
+        # pod numbering in statefulsets. Thus, we are required to specify a command which
+        # allows us to extract the pod ID for usage as the Kafka Broker ID.
+        # See: https://github.com/kubernetes/kubernetes/issues/31218
+        command:
+        - sh
+        - -exc
+        - |
+          unset KAFKA_PORT && \
+          export KAFKA_BROKER_ID=${HOSTNAME##*-} && \
+          export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${POD_IP}:9092 && \
+          exec /etc/confluent/docker/run
+        volumeMounts:
+        - name: datadir
+          mountPath: "/opt/kafka/data"
+      volumes:
+      terminationGracePeriodSeconds: 1800
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
+
+---
+# Source: kafka/charts/zookeeper/templates/poddisruptionbudget.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: kafka-zookeeper
+  labels:
+    app: zookeeper
+    chart: zookeeper-1.2.0
+    release: kafka
+    heritage: Tiller
+    component: server
+spec:
+  selector:
+    matchLabels:
+      app: zookeeper
+      release: kafka
+      component: server
+  maxUnavailable: 1
+  
+
+---
+# Source: kafka/charts/zookeeper/templates/config-jmx-exporter.yaml
+
+
+---
+# Source: kafka/charts/zookeeper/templates/job-chroots.yaml
+
+---
+# Source: kafka/templates/configmap-config.yaml
+
+---
+# Source: kafka/templates/configmap-jmx.yaml
+
+
+---
+# Source: kafka/templates/deployment-kafka-exporter.yaml
+
+
+---
+# Source: kafka/templates/job-config.yaml
+
+---
+# Source: kafka/templates/rbac.yaml
+
+
+---
+# Source: kafka/templates/service-brokers-external.yaml
+
+
+---
+# Source: kafka/templates/servicemonitors.yaml
+
+---
+

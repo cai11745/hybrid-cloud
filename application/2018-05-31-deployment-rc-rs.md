@@ -53,3 +53,50 @@ spec:
           path: /tmp
 
 ```
+
+需要注意的是创建的deployment 下会以rs作为二级控制器实现版本管理。
+
+```bash
+macbook :: ~ » kubectl run tomcat --image=tomcat:9.0 --port=8080
+
+macbook :: ~ » kubectl get deployment
+NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+tomcat    1         1         1            1           41m
+macbook :: ~ »
+macbook :: ~ » kubectl get rs
+NAME                DESIRED   CURRENT   READY     AGE
+tomcat-7bddb697fc   1         1         1         41m
+```
+
+## 应用升级 
+
+升级镜像版本，set image 可以通过 --help 查看更多参数。  tomcat=tomcat:8.5  前面是容器名称，后面是镜像名称
+
+升级会新增一个rs，记录了版本信息
+
+```bash
+macbook :: ~ » kubectl set image deployment/tomcat tomcat=tomcat:8.5 
+deployment.apps "tomcat" image updated
+macbook :: ~ »
+macbook :: ~ » kubectl get rs -o wide
+NAME                DESIRED   CURRENT   READY     AGE       CONTAINERS   IMAGES       SELECTOR
+tomcat-7bddb697fc   0         0         0         50m       tomcat       tomcat:9.0   pod-template-hash=3688625397,run=tomcat
+tomcat-879cdf45     1         1         0         2m        tomcat       tomcat:8.5   pod-template-hash=43578901,run=tomcat
+```
+
+## 版本回退
+
+```bash
+macbook :: ~ » kubectl rollout undo deployment tomcat  
+deployment.apps "tomcat"
+macbook :: ~ »
+macbook :: ~ » kubectl get rs -o wide
+NAME                DESIRED   CURRENT   READY     AGE       CONTAINERS   IMAGES       SELECTOR
+tomcat-7bddb697fc   1         1         1         54m       tomcat       tomcat:9.0   pod-template-hash=3688625397,run=tomcat
+tomcat-879cdf45     0         0         0         6m        tomcat       tomcat:8.5   pod-template-hash=43578901,run=tomcat
+```
+
+openshift的dc 同理，每个dc会有下一级rc，来做版本管理
+
+
+
