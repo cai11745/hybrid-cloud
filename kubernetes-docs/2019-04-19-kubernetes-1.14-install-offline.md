@@ -11,7 +11,7 @@ description:
 
 所需文件百度盘连接
 
-链接：   密码： 
+链接:https://pan.baidu.com/s/1Z4DKifRmgl95amCMUFnXog  密码:gkf9
 
 ### 1. 环境准备
 
@@ -274,8 +274,11 @@ dashboard是官方的k8s 管理界面，可以查看应用信息及发布应用�
 
 一共需要导入3个yaml文件
 
+文件地址 
+https://github.com/cai11745/k8s-ocp-yaml/tree/master/yaml-file/dashboard-1.10.1
+
 ```
-kubectl apply -f kubernetes-dashboard-http.yaml
+kubectl apply -f kubernetes-dashboard.yaml
 kubectl apply -f admin-role.yaml
 kubectl apply -f kubernetes-dashboard-admin.rbac.yaml
 
@@ -286,9 +289,8 @@ kube-dns               ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153
 kubernetes-dashboard   NodePort    10.97.8.30   <none>        443:32001/TCP,80:32000/TCP   13m
 ```
 
-
-
 创建完成后，通过 http://任意节点的IP:32000即可访问ui
+不需要输入token，也不需要https
 
 
 ### 8. EFK和监控

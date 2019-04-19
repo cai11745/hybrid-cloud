@@ -20,6 +20,7 @@
   * [template](part2/better_tools.md)
 
 * [kubernetes部署]
+  * [kubernetes 1.14 离线安装](kubernetes-docs/2019-04-19-kubernetes-1.14-install-offline.md) 
   * [kubernetes dashboard 免密登陆](kubernetes-docs/2018-11-20-kubernetes-dashboard-enable-http.md)
   * [kubernetes1.10 install offline](kubernetes-docs/2018-04-07-kubernetes-1.10-install-offline.md)
   * [kubernetes1.9 install online](kubernetes-docs/2018-04-02-kubernetes-1.9-install-online.md)
