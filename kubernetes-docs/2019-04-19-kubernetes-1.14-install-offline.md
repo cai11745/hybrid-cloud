@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  centos7. kubernetes/k8s 1.14 离线安装
+title:  centos7.5 kubernetes/k8s 1.14 离线安装
 category: kubernetes
 description: 
 ---
@@ -11,7 +11,7 @@ description:
 
 所需文件百度盘连接
 
-链接:https://pan.baidu.com/s/1Z4DKifRmgl95amCMUFnXog  密码:gkf9
+链接：https://pan.baidu.com/s/1iQJpKZ9PdFjhz9yTgl0Wjg 密码：gwmh
 
 ### 1. 环境准备
 
