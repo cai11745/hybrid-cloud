@@ -32,8 +32,8 @@
   * [dockerfile examples](docker-docs/2017-08-10-dockerfile-examples.md)
   * [dockerfile 命令](docker-docs/2017-07-19-dockerfile-command.md)
 
-* openshift相关
-  * [route](part2/feedback_please.md)
+* openshift
+  * [openshift origin 3.11 在线安装](openshift-docs/2019-07-02-openshift311-origin在线部署.md)
   * [template](part2/better_tools.md)
 ----
 
