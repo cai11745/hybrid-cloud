@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: demo-resources-limit
+  name: demo-resources-limit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: demo-resources-limit
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: demo-resources-limit
+    spec:
+      containers:
+      - image: tomcat
+        name: demo-resources-limit
+        ports:
+        - containerPort: 8080
+        resources:     #限制container的资源
+          requests:   #请求的资源
+            cpu: 100m  #1m为千分之1核，此处为0.1核
+            memory: 200M  
+          limits:     #pod最大可以使用的资源
+            cpu: 300m
+            memory: 500M
+
