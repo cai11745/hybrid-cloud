@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: demo-node-selector
+  name: demo-node-selector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: demo-node-selector
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: demo-node-selector
+    spec:
+      nodeSelector:
+        nodetest: yeyeye
+      containers:
+      - image: tomcat
+        name: demo-node-selector
+        ports:
+        - containerPort: 8080
+        resources: {}
+status: {}
