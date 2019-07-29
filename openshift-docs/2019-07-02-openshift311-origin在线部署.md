@@ -157,7 +157,7 @@ git checkout release-3.11
 #### 2. 准备ansible hosts文件 
 ```bash
 # 在openshift-ansible 目录
-# 修改inventory/hosts文件
+# 新建文件 inventory/hosts 内容如下
 
 [root@origin311 openshift-ansible-release-3.11]# cat inventory/hosts
 # Create an OSEv3 group that contains the masters, nodes, and etcd groups

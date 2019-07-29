@@ -181,8 +181,76 @@ git checkout release-3.11
 #### 2. 准备ansible hosts文件 
 ```bash
 # 在openshift-ansible 目录
-# 修改inventory/hosts文件
+# 修改etory/hosts文件
 # 注意这个里面没有写LB，LB使用公有云负载，提前配置好，8443 端口负载到三个master的8443 
+
+[root@master1 openshift-ansible]# cat inventory/hosts
+# Create an OSEv3 group that contains the master, nodes, etcd, and lb groups.
+# The lb group lets Ansible configure HAProxy as the load balancing solution.
+# Comment lb out if your load balancer is pre-configured.
+[OSEv3:children]
+masters
+nodes
+etcd
+
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+ansible_ssh_user=root
+openshift_deployment_type=origin
+
+# uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+#openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
+
+# Native high availbility cluster method with optional load balancer.
+# If no lb group is defined installer assumes that a load balancer has
+# been preconfigured. For installation the value of
+# openshift_master_cluster_hostname must resolve to the load balancer
+# or to one or all of the masters defined in the inventory if no load
+# balancer is present.
+openshift_master_cluster_method=native
+openshift_master_cluster_hostname=haproxy.ocp311.com
+openshift_master_cluster_public_hostname=haproxy.ocp311.com
+
+# 部署metrics 监控，弹性会用到
+openshift_metrics_install_metrics=true
+## EFK
+openshift_logging_install_logging=true
+#关闭prometheus，默认是安装
+openshift_cluster_monitoring_operator_install=false
+#
+# catalog 屏蔽，用不到
+ansible_service_broker_install=false
+openshift_enable_service_catalog=false
+template_service_broker_install=false
+
+# apply updated node defaults
+#openshift_node_groups=[{'name': 'node-config-all-in-one', 'labels': ['node-role.kubernetes.io/master=true', 'node-role.kubernetes.io/infra=true', 'node-role.kubernetes.io/compute=true'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['20']}]}]
+
+# host group for masters
+[masters]
+master1.ocp311.com
+master2.ocp311.com
+master3.ocp311.com
+
+# host group for etcd
+[etcd]
+master1.ocp311.com
+master2.ocp311.com
+master3.ocp311.com
+
+# Specify load balancer host
+
+# host group for nodes, includes region info
+[nodes]
+master1.ocp311.com openshift_node_group_name='node-config-master'
+master2.ocp311.com openshift_node_group_name='node-config-master'
+master3.ocp311.com openshift_node_group_name='node-config-master'
+node1.ocp311.com openshift_node_group_name='node-config-infra'
+node2.ocp311.com openshift_node_group_name='node-config-infra'
+node3.ocp311.com openshift_node_group_name='node-config-compute'
+
+
+下面这个在华为云预监测失败
 
 [root@origin311 openshift-ansible-release-3.11]# cat inventory/hosts
 # Create an OSEv3 group that contains the masters, nodes, and etcd groups
