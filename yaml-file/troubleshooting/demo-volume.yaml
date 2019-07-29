@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: demo-volume
+  name: demo-volume
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: demo-volume
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: demo-volume
+    spec:
+      containers:
+      - image: tomcat
+        name: demo-volume
+        ports:
+        - containerPort: 8080
+        volumeMounts:       #把volume挂载到容器内部
+        - mountPath: /tmp   #容器内的路径
+          name: share  #使用的volume名称，需要与下面的volume name对应
+      volumes:     #pvc挂载到容器
+      - name: share
+        persistentVolumeClaim:
+          claimName: pvc-demo-volume  #pvc名称
+
