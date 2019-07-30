@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: demo-liveness-fail
+  name: demo-liveness-fail
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: demo-liveness-fail
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: demo-liveness-fail
+    spec:
+      containers:
+      - image: tomcat
+        name: demo-liveness-fail
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /docs
+            port: 8080
+          initialDelaySeconds: 40
+          periodSeconds: 3
+          failureThreshold: 3
