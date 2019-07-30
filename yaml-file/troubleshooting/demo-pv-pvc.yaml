@@ -11,7 +11,7 @@ spec:
     storage: 1Gi
   nfs:
     path: /opt/add-dev/nfs/
-    server: 192.168.4.130
+    server: 192.168.4.133
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
