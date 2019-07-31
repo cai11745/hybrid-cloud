@@ -45,7 +45,7 @@ oc project openshift-infra
 
 图中每个操作默认第一个命令是kubectl,如kubectl describe pod xxx
 以下详述各步骤操作缘由和可能引起的原因。
-**查看pod 及控制器event的方法是 kubectl describe pod podname-xx  及 kubectl describe deploy deployname-xxx, 看pod 日志是 kubectl logs pod-name ，如果pod内多个容器，kubectl logs pod-name -c container-name**
+**查看pod 及控制器event的方法是 kubectl describe pod podname-xx  及 kubectl describe deploy deployname-xxx, 看pod日志是 kubectl logs pod-name ，如果pod内多个容器，kubectl logs pod-name -c container-name**
 另外，如果deploy，dc，pod中event都是空空如也，get rs,rc 看看他们的event，或许有新发现。 rs rc为deploy，dc的二级控制器，用于版本管理。
 
 ### kubectl get pod 能看到pod
@@ -327,5 +327,7 @@ tomtest-865b47b7df   1         0         0       8m53s
  ### 应用运行正常，但是无法访问
  
 基本思路就是从负载层一步步往回推，ingress/router/nodeport不通，就先在集群内访问service cluster地址，再在集群内直接访问pod地址
+ 具体下一篇再写。 
+github地址，后续若有补充会更新在这
+https://github.com/cai11745/k8s-ocp-yaml/blob/master/kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md
 
- 具体下一篇再写。        
