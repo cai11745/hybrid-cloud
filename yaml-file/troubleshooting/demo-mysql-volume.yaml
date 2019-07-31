@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: demo-mysql-volume
+  name: demo-mysql-volume
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: demo-mysql-volume
+  template:
+    metadata:
+      labels:
+        run: demo-mysql-volume
+    spec:
+      containers:
+      - image: mysql:5.7
+        name: demo-mysql-volume
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        volumeMounts:       #把volume挂载到容器内部
+        - mountPath: /var/lib/mysql   #容器内的路径
+          name: share  #使用的volume名称，需要与下面的volume name对应
+      volumes:     #pvc挂载到容器
+      - name: share
+        persistentVolumeClaim:
+          claimName: pvc-mysql-volume  #pvc名称
+
