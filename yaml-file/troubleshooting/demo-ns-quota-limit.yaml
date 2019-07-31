@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-test
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: myquota
+  namespace: demo-test
+spec:
+  hard:
+    cpu: "1"
+    memory: 1G
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mylimit
+  namespace: demo-test
+spec:
+  limits:
+  - default:
+      cpu: "2"
+      memory: "2Gi"
+    type: Container
