@@ -283,8 +283,114 @@ tmpfs                            16G     0   16G   0% /proc/scsi
 tmpfs                            16G     0   16G   0% /sys/firmware
 ```
 **或者运行权限问题**
-在新部署完成的openshift中，首次运行docker.io 上的tomcat，nginx 都会失败
+本项测试基于openshift  
+在新部署完成的openshift中，首次运行docker.io 上的nginx redis都会失败
+和openshift Security Context Constraint（SCC）有关，SCC 用于控制访问系统资源的权限
+oc get scc 可以查看所有，默认的scc是  restricted，详细的对比可以oc describe scc 查看
+基本情况是privileged > anyuid > restricted
+restricted 必须运行在特定的user id范围，root肯定不行，及hostnetwork，hostvolume 等权限受限
 
+举个栗子，新建一个project，运行一个docker.io 上的nginx  
+```bash
+# oc new-project test1
+# oc run nginx --image=nginx --port=80
+# oc get pod
+NAME            READY     STATUS    RESTARTS   AGE
+nginx-1-hx8gj   0/1       Error     0          10s
+# oc logs nginx-1-hx8gj 
+2019/07/31 14:33:26 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:2
+nginx: [warn] the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:2
+2019/07/31 14:33:26 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+nginx: [emerg] mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+```
+报错了，用户权限不足
+
+解决方法1: 
+由于pod 的默认 serviceaccount 叫default，我们把default 加到scc anyuid 里面，那这个project下的所有pod都将具备 scc anyuid权限，这种方式是比较暴力的，不建议这么操作。建议按照方法2
+```bash
+oc adm policy add-scc-to-user anyuid -z default
+oc rollout latest nginx   #更新nginx
+# oc get pod
+NAME            READY     STATUS    RESTARTS   AGE
+nginx-2-q86bv   1/1       Running   0          49s
+```
+
+解决方法2：
+新建一个serviceaccount，将他加入到scc anyuid，然后指定需要特权服务的应用来使用这个serviceaccount，这样可以避免所有pod 都具备anyuid权限
+新起一个project做测试
+```bash
+oc new-project test2
+oc run nginx2 --image=nginx --port=80
+oc get pod
+
+oc create serviceaccount ngroot
+oc adm policy add-scc-to-user anyuid -z ngroot
+oc patch dc/nginx2 --patch '{"spec":{"template":{"spec":{"serviceAccountName": "ngroot"}}}}'
+
+# oc get pod
+NAME             READY     STATUS    RESTARTS   AGE
+nginx2-2-mkrdp   1/1       Running   0          12s
+```
+解决方法3：
+我们按照scc restricted 复制一个，只给他增加 nginx 需要的权限
+```bash
+首先导出scc restricted 为yaml文件，并copy一份
+oc get scc restricted --export -o yaml > restricted.yaml 
+cp restricted.yaml restricted-ng.yaml
+
+vim restricted-ng.yaml
+修改   name:  把restricted 改为restricted-ng
+修改 runAsUser: 把 MustRunAsRange 修改为 RunAsAny
+修改 groups: 把 system:authenticated 一行删掉，不然这个scc会把所有project的默认scc给改了
+修改 priority:  null 改成 5   //优先级要高于默认restricted
+
+
+导入新的scc
+oc apply -f restricted-ng.yaml 
+oc get scc   
+
+创建新的project和应用用于测试
+oc new-project test3
+oc run nginx3 --image=nginx --port=80
+
+创建新的serviceaccount并使用上面创建的scc
+oc create serviceaccount ng3root
+oc adm policy add-scc-to-user restricted-ng -z ng3root
+oc patch dc/nginx3 --patch '{"spec":{"template":{"spec":{"serviceAccountName": "ng3root"}}}}'
+
+[root@origin311 ~]# oc get pod
+NAME             READY     STATUS    RESTARTS   AGE
+nginx3-2-wsk97   1/1       Running   0          20s
+[root@origin311 ~]# oc logs nginx3-2-wsk97 
+2019/07/31 15:52:46 [emerg] 7#7: setgid(101) failed (1: Operation not permitted)
+2019/07/31 15:52:46 [alert] 1#1: worker process 7 exited with fatal code 2 and cannot be respawned
+
+发现还有一个报错，没有setgid权限
+oc edit scc restricted-ng 
+修改 requiredDropCapabilities: 这项，这个里面是被限制的权限
+把 - SETUID  -SETGID 删掉，两个都删了，若只删setgid，下一步pod就是接着setuid的报错
+
+oc rollout latest nginx3
+[root@origin311 ~]# oc get pod -owide
+NAME             READY     STATUS    RESTARTS   AGE       IP             NODE                    NOMINATED NODE
+nginx3-4-5bdpj   1/1       Running   0          1m        10.128.0.126   origin311.localpd.com   <none>
+[root@origin311 ~]# oc logs nginx3-4-5bdpj 
+[root@origin311 ~]# 
+
+没报错就是正常了，测试下请求没问题
+[root@origin311 ~]# curl 10.128.0.126
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+```
+
+FAQ: 
+1. 如果你默认scc 不小心调乱了，可以用这个命令重置  oc adm policy reconcile-sccs --confirm
+2. SCC 优先级：一个 sa user 可以被加到多的 scc 当中。当一个 service account user 有多个 SCC 可用时，其 scc 按照下面的规则排序
+最高优先级的scc排在最前面。默认地，对于 cluster admin 角色的用户的 pod，anyuid scc 会被授予最高优先级，排在最前面。这会允许集群管理员能够以任意 user 运行 pod，而不需要指定 pod 的 SecurityContext 中的 RunAsUser 字段。
+如果优先级相同，scc 将从限制最高的向限制最少的顺序排序。
+如果优先级和限制都一样，那么将按照名字排序。
 
 
 ### kubectl get pod 看不到pod
@@ -325,6 +431,8 @@ tomtest-865b47b7df   1         0         0       8m53s
 ```
 可以看到rs的event中有明确报错信息。
 原因是这个namespace 设置了quota，即资源上线为1核1G。 同时设置了limitranges 为2核2G，即这个namespace下创建的容器，每个的默认资源都为2核2G，资源不足导致了pod未创建。
+
+scc限制了volume权限，导致pod无法直接挂载nfs也会出现这种现象，看不到pod。
 
  ### 应用运行正常，但是无法访问
  
