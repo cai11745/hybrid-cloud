@@ -6,13 +6,14 @@ description:
 ---
 
 分享一下本人在k8s openshift项目中积累的一些异常诊断方法，希望能带给各位一些帮助。 本文主要描述问题解决流程和思路，针对应用发布/运行异常、访问异常，会插入一些场景。
-分两部分
-1. 应用发布后运行异常，即pod 无法正常启动或者启动后无限重启
-2. 应用运行正常，pod 状态是running，但是无法通过ingress，nodeport，router等方式访问
+分两部分  
+1. 应用发布后运行异常，即pod 无法正常启动或者启动后无限重启  
+2. 应用运行正常，pod 状态是running，但是无法通过ingress，nodeport，router等方式访问  
 
 ### 一些技巧写在前面
-应该能够在平时运维上提高一些效率
-1. kubectl 命令table自动补全
+应该能够在平时运维上提高一些效率  
+1. kubectl 命令table自动补全  
+
 ```bash
 echo 'source <(kubectl completion bash)' >>/etc/profile
 source  /etc/profile
@@ -22,7 +23,7 @@ echo 'source <(kubectl completion zsh)' >> ~/.zshrc
 source  ~/.zshrc
 ```
 
-2. 切换namespace/project
+2. 切换namespace/project  
 ```bash
 # 使用非default namespace，先写 -n xxx ,不影响table补全 xxx
 kubectl -n kube-system get deploy
@@ -35,7 +36,8 @@ kubectl get pod   #看到的都是kube-system下的pod
 # 如果是openshift，直接oc project 可以切换
 oc project openshift-infra
 ```
-3. 应用迁移的时候配置文件由简到繁
+
+3. 应用迁移的时候配置文件由简到繁  
 不要一开始就一古脑把readiness，liveness，resource通通配上，会让你在排查故障时多走弯路。 最开始运行的时候只要镜像、端口、必要的环境变量或者存储。
 
 ### 应用运行异常整体处理流程
