@@ -1,18 +1,18 @@
 ---
 layout: post
-title:  kubernetes/openshift 应用异常诊断思路
+title:  kubernetes/openshift 应用异常诊断指南
 category: kubernetes,openshift,trobshooting
 description: 
 ---
 
-分享一下本人在k8s openshift项目中积累的一些异常诊断方法，希望能带给各位一些帮助。 本文主要描述问题解决流程和思路，针对应用发布/运行异常、访问异常，会插入一些场景。
+分享一些本人在k8s openshift项目中积累的一些异常诊断方法。 本文主要描述问题解决流程和思路，针对应用发布/运行异常、访问异常，会插入一些场景。
 分两部分  
 1. 应用发布后运行异常，即pod 无法正常启动或者启动后无限重启  
 2. 应用运行正常，pod 状态是running，但是无法通过ingress，nodeport，router等方式访问  
 
 ### 一些技巧写在前面
 应该能够在平时运维上提高一些效率  
-1. kubectl 命令table自动补全  
+a. kubectl 命令table自动补全  
 
 ```bash
 echo 'source <(kubectl completion bash)' >>/etc/profile
@@ -23,7 +23,7 @@ echo 'source <(kubectl completion zsh)' >> ~/.zshrc
 source  ~/.zshrc
 ```
 
-2. 切换namespace/project  
+b. 切换namespace/project  
 ```bash
 # 使用非default namespace，先写 -n xxx ,不影响table补全 xxx
 kubectl -n kube-system get deploy
@@ -37,7 +37,7 @@ kubectl get pod   #看到的都是kube-system下的pod
 oc project openshift-infra
 ```
 
-3. 应用迁移的时候配置文件由简到繁  
+c. 应用迁移的时候配置文件由简到繁  
 不要一开始就一古脑把readiness，liveness，resource通通配上，会让你在排查故障时多走弯路。 最开始运行的时候只要镜像、端口、必要的环境变量或者存储。
 
 ### 应用运行异常整体处理流程
@@ -52,10 +52,10 @@ oc project openshift-infra
 
 ### kubectl get pod 能看到pod
 #### pod event 无start container
-1. pod状态处于pending
-pod未被成功调度到node节点，通过查看pod event 都能够找到原因
-下面列几个常见报错
-a. 资源不足
+A. pod状态处于pending  
+pod未被成功调度到node节点，通过查看pod event 都能够找到原因  
+下面列几个常见报错  
+a. 资源不足  
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/cai11745/k8s-ocp-yaml/master/yaml-file/troubleshooting/demo-resources-limit.yaml
 # kubectl get pod
@@ -172,16 +172,16 @@ tmpfs                            16G     0   16G   0% /sys/firmware
 ```
 现在都正常了，进入容器 df -h 查看挂载ok
 
-2. pod状态处于 ImagePullBackOff或者 ErrImagePull
-这个报错很明显，镜像拉取失败，通过 kubectl get pod -owide 查看pod 所在node节点，在node节点上手动docker pull 试试，或者是外网的镜像比如 gcr.io 可能需要自己手动搭梯子
+B. pod状态处于 ImagePullBackOff或者 ErrImagePull  
+这个报错很明显，镜像拉取失败，通过 kubectl get pod -owide 查看pod 所在node节点，在node节点上手动docker pull 试试，或者是外网的镜像比如 gcr.io 可能需要自己手动搭梯子  
 另外需要注意，如果使用的是自己搭建的仓库，不是https的，而pod event 中镜像地址却是https:// 开头，说明你docker 配置中少了 Insecure Registries 的配置
 
 
 #### pod event 有 start container
-event出现start container，说明pod已经调度成功，镜像拉取成功，存储挂载成功（不代表读写权限正常）
-但是可能因为健康检查配置不当或者容器启动脚本、存储权限、运行权限的原因导致启动失败而反复重启。
+event出现start container，说明pod已经调度成功，镜像拉取成功，存储挂载成功（不代表读写权限正常）  
+但是可能因为健康检查配置不当或者容器启动脚本、存储权限、运行权限的原因导致启动失败而反复重启。  
 首先还是kubectl describe pod 看event，若没有报错内容，则查看pod log
-1. pod liveness 监测失败
+A.  pod liveness 监测失败
 首先需要理解liveness的功能，当liveness 监测失败次数达到设定值的时候，就会重启容器。这种原因导致的容器重启原因在event中能够很明确的获取到，修改相应设定即可，或延迟init时间，或调整监测参数、端口。解决没有什么难度，而且遇到的也相对较少。
 ```bash
 
@@ -207,7 +207,7 @@ NAME                                  READY   STATUS    RESTARTS   AGE
 demo-liveness-fail-766f9df949-b68wr   1/1     Running   0          10m
 ```
 
-2. pod 启动异常导致反复重启
+B. pod 启动异常导致反复重启
 **这种情况是非常常见的**
 这种基本是启动脚本、权限之类问题引起。
 基本思路是describe pod 看event，同时观察log。
@@ -241,7 +241,7 @@ kubectl describe pod demo-centos5-7fc7f8bccc-zpzct
       Exit Code:    127
 ```
 
-**或者你的存储权限不对**，此处为挂载的nfs server
+c. **或者你的存储权限不对**，此处为挂载的nfs server
 ```bash
 # nfs server 参数，默认root_squash 是on
 # cat /etc/exports
@@ -282,7 +282,7 @@ tmpfs                            16G     0   16G   0% /proc/acpi
 tmpfs                            16G     0   16G   0% /proc/scsi
 tmpfs                            16G     0   16G   0% /sys/firmware
 ```
-**或者运行权限问题**
+d. **或者运行权限问题**
 本项测试基于openshift  
 在新部署完成的openshift中，首次运行docker.io 上的nginx redis都会失败
 和openshift Security Context Constraint（SCC）有关，SCC 用于控制访问系统资源的权限
@@ -343,7 +343,7 @@ vim restricted-ng.yaml
 修改 runAsUser: 把 MustRunAsRange 修改为 RunAsAny
 修改 groups: 把 system:authenticated 一行删掉，不然这个scc会把所有project的默认scc给改了
 修改 priority:  null 改成 5   //优先级要高于默认restricted
-
+我改好的restricted-ng.yaml 在 https://raw.githubusercontent.com/cai11745/k8s-ocp-yaml/master/yaml-file/troubleshooting/restricted-ng.yaml
 
 导入新的scc
 oc apply -f restricted-ng.yaml 
@@ -435,9 +435,271 @@ tomtest-865b47b7df   1         0         0       8m53s
 scc限制了volume权限，导致pod无法直接挂载nfs也会出现这种现象，看不到pod。
 
  ### 应用运行正常，但是无法访问
- 
-基本思路就是从负载层一步步往回推，ingress/router/nodeport不通，就先在集群内访问service cluster地址，再在集群内直接访问pod地址
- 具体下一篇再写。 
-github地址，后续若有补充会更新在这
+接上篇，继续解读应用无法访问的场景。只要捋清各个访问方式的原理及走向，问题迎刃而解。
+前提：应用运行正常，在集群内部可以通过pod ip 访问应用。
+场景如下：
+集群外访问集群内应用：最常用的两种方式，ingress/route 访问， nodeport访问
+集群内应用互相访问：通过servicename 访问
+
+#### 集群外访问集群内应用 ingress/route
+ingress/route 分别是k8s/openshift常用的负载方式，常用来作为应用的负载均衡。  
+ingress controller 是k8s的应用负载均衡器，内部是nginx，会通过nodeselector 方式部署在特定的几个node节点，使用hostnetwork，默认监听node节点80 443端口,支持4层 7层负载，可以卸载证书。会将ingress 规则写入配置文件。  
+openshift中的负载均衡器叫router，内部是haproxy，默认部署在default namespace，infra 节点，hostnetwork方式，默认80 443端口，支持7层，可以卸载证书。  
+
+以openshift 为例创建一个应用及route
+```bash
+[root@master ~]# oc run tomtest --image=tomcat --port=8080
+deploymentconfig.apps.openshift.io/tomtest created
+[root@master ~]# oc expose dc tomtest
+service/tomtest exposed
+[root@master ~]# oc expose svc tomtest
+route.route.openshift.io/tomtest exposed
+
+[root@master ~]# oc get route
+NAME      HOST/PORT                           PATH      SERVICES   PORT      TERMINATION   WILDCARD
+tomtest   tomtest-demo.apps.origin311sz.com             tomtest    8080                    None
+# 自动创建了一个域名，指向tomtest 这个service 8080端口
+# ingress类似，域名需要自己指定
+# 后续在配置dns或者hosts之后，可以通过域名访问到应用
+```
+
+流量走向
+**流量走router/ingress controller 通过容器网络直接到pod，不走service ip！！！ 不走service ip！！！不走service ip！！！**
+service 只作为同步应用后端的pod ip作用，见下图这是router，ingress 也是这样
+![troubleshooting-2](../image/troubleshooting-ocp-router.png)
+
+router的配置信息进入到router容器中，有个haproxy配置文件，内容很清晰。
+ingress的进入ingress controller容器，nginx.conf中可以查看server信息，看不到backend 应用pod ip，用dbg命令可以看，如下   
+```bash
+# 先创建deployment，svc，ingress
+[root@master ~]# kubectl -n ingress-nginx exec -it nginx-ingress-controller-86b96b86fb-45kn8 bash
+www-data@node1:/etc/nginx$ /dbg backends list
+default-tom-8080
+upstream-default-backend
+www-data@node1:/etc/nginx$
+www-data@node1:/etc/nginx$ /dbg backends get default-tom-8080
+{
+  "endpoints": [
+    {
+      "address": "10.250.11.75",
+      "port": "8080"
+    },
+    {
+      "address": "10.250.11.76",
+      "port": "8080"
+    }
+  ],
+  ......
+```
+
+那么异常分析流程就很清晰了：
+1. 首先确认域名解析正常，通过nslookup，dig工具确认域名是解析到了router/ingress controller 所在的node节点ip。 因为使用的hostnetwork，所以router/ingress controller 的ip也就是所在node节点的ip。
+或者没有使用dns解析，那么本地hosts 需要手动配置下，将域名解析到 router/ingress controller 的ip
+2. 确认 router/ingress controller  容器运行正常，看下容器日志。并确认网络为hostnetwork，oc get pod -owide 要看到ip是node节点ip
+3. 确认 router/ingress controller 节点能够访问异常应用的pod ip，若异常，则排查容器网络 calico或者openvswitch等。
+
+#### 集群外访问集群内应用 nodeport
+nodeport方式不依赖于router/ingress controller。 是配置在service中。配置后，访问任意节点IP（包含master）加nodeport 端口，即可访问到应用。
+端口默认范围： 30000~32767
+
+```bash
+# kubectl run tomnp --image=tomcat --port=8080 --replicas=3
+[root@master ~]# kubectl expose deploy tomnp --type=NodePort
+service/tomnp exposed
+[root@master ~]# kubectl get svc
+NAME    TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+tomnp   NodePort   10.102.171.245   <none>        8080:31086/TCP   9s
+# kubectl get po -owide
+NAME                    READY   STATUS    RESTARTS   AGE    IP             NODE      NOMINATED NODE   READINESS GATES
+tomnp-679765679-68zx7   1/1     Running   0          102s   10.244.0.49    master1   <none>           <none>
+tomnp-679765679-d9nwb   1/1     Running   0          102s   10.244.1.114   node1     <none>           <none>
+tomnp-679765679-whzhm   1/1     Running   0          102s   10.244.0.50    master1   <none>           <none>
+```
+
+自动分配了一个端口31086，也可以手动指定。那么访问 任意节点ip:31086 即可访问应用。  
+原理：创建service后，kube-proxy会写入一些规则到每个节点的iptables，使得访问节点的31086端口的流量转发到各个pod。kube-proxy容器在kube-system namespace下。可以通过查询iptables来缕清楚规则。  
+```bash
+# 首先通过nodeport 31086 访问会进入下面链路
+# iptables -S -t nat |grep 31086
+-A KUBE-NODEPORTS -p tcp -m comment --comment "demo-test/tomnp:" -m tcp --dport 31086 -j KUBE-MARK-MASQ
+-A KUBE-NODEPORTS -p tcp -m comment --comment "demo-test/tomnp:" -m tcp --dport 31086 -j KUBE-SVC-MQE7U74K2IT7EWQJ
+
+# 查看svc对应的链，有0.333概率进入KUBE-SEP-KZ2UNP3ZNMYH722J 
+# 0.67概率的0.50 会进入 KUBE-SEP-ITOYRBWPRT5JVIJ6
+# 还未命中的都进入 KUBE-SEP-7RMBKNPQ7TIOQL4S，算下来每个概率都是0.33
+# iptables -S -t nat |grep KUBE-SVC-MQE7U74K2IT7EWQJ
+-N KUBE-SVC-MQE7U74K2IT7EWQJ
+-A KUBE-NODEPORTS -p tcp -m comment --comment "demo-test/tomnp:" -m tcp --dport 31086 -j KUBE-SVC-MQE7U74K2IT7EWQJ
+-A KUBE-SERVICES -d 10.102.171.245/32 -p tcp -m comment --comment "demo-test/tomnp: cluster IP" -m tcp --dport 8080 -j KUBE-SVC-MQE7U74K2IT7EWQJ
+-A KUBE-SVC-MQE7U74K2IT7EWQJ -m statistic --mode random --probability 0.33332999982 -j KUBE-SEP-KZ2UNP3ZNMYH722J
+-A KUBE-SVC-MQE7U74K2IT7EWQJ -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-ITOYRBWPRT5JVIJ6
+-A KUBE-SVC-MQE7U74K2IT7EWQJ -j KUBE-SEP-7RMBKNPQ7TIOQL4S
+
+# 三个kube-sep分别对应三个pod地址
+[root@master1 ~]# iptables -S -t nat |grep KUBE-SEP-KZ2UNP3ZNMYH722J
+-N KUBE-SEP-KZ2UNP3ZNMYH722J
+-A KUBE-SEP-KZ2UNP3ZNMYH722J -s 10.244.0.49/32 -j KUBE-MARK-MASQ
+-A KUBE-SEP-KZ2UNP3ZNMYH722J -p tcp -m tcp -j DNAT --to-destination 10.244.0.49:8080
+[root@master1 ~]# iptables -S -t nat |grep KUBE-SEP-ITOYRBWPRT5JVIJ6
+-N KUBE-SEP-ITOYRBWPRT5JVIJ6
+-A KUBE-SEP-ITOYRBWPRT5JVIJ6 -s 10.244.0.50/32 -j KUBE-MARK-MASQ
+-A KUBE-SEP-ITOYRBWPRT5JVIJ6 -p tcp -m tcp -j DNAT --to-destination 10.244.0.50:8080
+[root@master1 ~]# iptables -S -t nat |grep KUBE-SEP-7RMBKNPQ7TIOQL4S
+-N KUBE-SEP-7RMBKNPQ7TIOQL4S
+-A KUBE-SEP-7RMBKNPQ7TIOQL4S -s 10.244.1.114/32 -j KUBE-MARK-MASQ
+-A KUBE-SEP-7RMBKNPQ7TIOQL4S -p tcp -m tcp -j DNAT --to-destination 10.244.1.114:8080
+```
+
+异常分析：
+1. 确认ip forward 是打开的
+```bash
+如何诊断
+# 检查 ipv4 forwarding 是否开启
+sysctl net.ipv4.ip_forward
+# 0 意味着未开启
+net.ipv4.ip_forward = 0
+
+如何修复
+# this will turn things back on a live server
+sysctl -w net.ipv4.ip_forward=1
+# on Centos this will make the setting apply after reboot
+echo net.ipv4.ip_forward=1 >> /etc/sysconf.d/10-ipv4-forwarding-on.conf
+
+# 验证并生效
+sysctl -p
+```
+2. 确认node节点存在nodeport相关iptables，方法上面有，若iptables规则不正常，则检查kube-proxy容器运行状态及日志。
+3. 以上都正常，那么很有可能是容器网络出问题了。排查calico容器日志，及pod，service ip段是否规划有误。
+
+#### 集群内应用互相访问
+场景： 创建deployment A，名为 tomcat，端口8080 ，创建对应service 名为tomsvc，端口 8080
+创建deployment B，名为 nginx，端口80，创建对应service，名为 ngsvc， 端口 80
+应用A B 互相访问使用对方servicename+端口即可。无需再通过ingress或者nodeport方式。此原理依赖于集群内部dns。（k8s 是coredns容器--之前是kubedns，openshift 是dnsmasq，是系统服务不是容器）
+
+```bash
+# kubectl run tomcat --image=tomcat --port=8080
+# kubectl expose deploy tomcat --name=tomsvc
+# kubectl run nginx --image=nginx --port=80
+# kubectl expose deploy nginx --name=ngsvc
+# kubectl get svc
+NAME     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+ngsvc    ClusterIP   10.108.15.66   <none>        80/TCP     15s
+tomsvc   ClusterIP   10.104.225.1   <none>        8080/TCP   66s
+
+# tomcat通过ngsvc:80 访问nginx
+# kubectl exec -it tomcat-5ccb865777-xrmlv bash
+root@tomcat-5ccb865777-xrmlv:/usr/local/tomcat# curl ngsvc:80
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+......
+
+```
+
+功能测试：
+可以通过运行一个busybox:1.28来测试dns解析，里面带nslookup
+注意用1.28的，有的版本里面nslookup不好使
+```bash
+# kubectl run busybox --image=busybox:1.28 --command sleep 36000
+# kubectl exec -it busybox-7fc57b9d54-j4tbq sh
+/ # nslookup ngsvc
+Server:    10.96.0.10
+Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+
+Name:      ngsvc
+Address 1: 10.108.15.66 ngsvc.demo-test.svc.cluster.local
+
+可以看到ngsvc的完整域名是ngsvc.demo-test.svc.cluster.local
+demo-test 是namespace 名称
+为什么ngsvc也能解析成功，看下/etc/resolv.conf文件
+nameserver 指向的是coredns的svc 地址，这没问题
+主要在于search，查询主机名，因为主机名后面没有点，就认为是主机名，所以先添加search里的每一项依次组成FQDN（完全合格域名）来查询，完全合格域名查询未找到，就再认为主机名是完全合格域名来查询。
+/ # cat /etc/resolv.conf
+nameserver 10.96.0.10
+search demo-test.svc.cluster.local svc.cluster.local cluster.local
+options ndots:5
+
+跨namespace访问，在service名称后接上namespace名称
+/ # nslookup kubernetes.default
+Server:    10.96.0.10
+Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+
+Name:      kubernetes.default
+Address 1: 10.96.0.1 kubernetes.default.svc.cluster.local
+```
+
+所以异常处理的顺序，k8s和openshift中dns server有些差异，分开写，实现的功能是一致的：
+1.1 k8s -- 确认集群内部dns服务正常，在master或者node节点上做
+```bash
+# nslookup kubernetes.default.svc.cluster.local 10.96.0.10
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+Name:	kubernetes.default.svc.cluster.local
+Address: 10.96.0.1
+
+域名写完成的，因为节点的/etc/resolv.conf里面是没有那些search内容的， 10.96.0.10 是coredns/kubedns的service ip
+解析成功说明dns服务是正常的，反之则排查dns服务容器
+```
+
+1.2 k8s -- 确认容器内部的dns地址指向
+```bash
+# kubectl exec -it tomcat-5ccb865777-xrmlv bash
+# cat /etc/resolv.conf
+nameserver 10.96.0.10
+search demo-test.svc.cluster.local svc.cluster.local cluster.local
+
+nameserver 的地址 需要与 kubectl -n kube-system get svc kube-dns 获取的CLUSTER-IP 一致
+这个nameserver 地址及 search cluster.local 是在各个节点kubelet服务中定义的。 通过systemctl status kubelet 能够追查到，文件是 /var/lib/kubelet/config.yaml
+```
+
+同时可以配合busybox:1.28的容器进行诊断
+
+2.1 openshift -- 确认集群内部dns服务正常，在异常访问到pod所在node节点上做
+```bash
+因为openshift 每个节点的dns server及节点上的pod dns server都是指向这台节点的ip的，原因可以查看dnsmasq服务
+[root@node1 ~]# hostname -i
+192.168.1.186
+[root@node1 ~]# cat /etc/resolv.conf
+# nameserver updated by /etc/NetworkManager/dispatcher.d/99-origin-dns.sh
+# Generated by NetworkManager
+search cluster.local origin311sz.com
+nameserver 192.168.1.186
+[root@node1 ~]# nslookup kubernetes.default.svc.cluster.local
+Server:		192.168.1.186
+Address:	192.168.1.186#53
+
+Name:	kubernetes.default.svc.cluster.local
+Address: 172.30.0.1
+
+dns能够解析service name
+```
+
+注意openshift不能关闭NetworkManager服务，部署文档都有说明。resolv.conf文件就是靠他来更新的。
+
+2.2 openshift -- 确认容器内部的dns地址指向
+nameserver地址是pod所在node的主机ip才是正确的，openshift中pod的resolv.conf 中nameserver 默认是从所在节点的/etc/resolv.conf获取，若pod中的尚未更新，重启下openshift node服务。然后delete 相关pod再看resolv.cof
+```bash
+# oc rsh tomtest-1-bg782
+$ cat /etc/resolv.conf
+nameserver 192.168.1.187
+search demo.svc.cluster.local svc.cluster.local cluster.local origin311sz.com
+options ndots:5
+
+openshift node服务
+systemctl status origin-node  #社区版
+systemctl status atomic-openshift-node  #企业版
+
+```
+
+同上，同时可以配合busybox:1.28的容器进行诊断
+
+openshift的更多dns相关的知识可以查看这篇文章。
+https://www.cnblogs.com/sammyliu/p/10056035.html
+
+
+故障诊断篇完结。下一篇大概是openshift template。  
+本篇上下完整版本可查询github，后续若有补充会更新在这
 https://github.com/cai11745/k8s-ocp-yaml/blob/master/kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md
 

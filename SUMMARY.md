@@ -26,16 +26,17 @@
   * [kubernetes1.9 install online](kubernetes-docs/2018-04-02-kubernetes-1.9-install-online.md)
   * [kubernetes1.9 HA install online](kubernetes-docs/2018-04-04-kubernetes-1.9-HA-install-online.md)
   * [helm install](kubernetes-docs/2018-05-02-install-helm.md)
-  * [k8s openshift troubleshooting](kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md)
+  * [k8s openshift troubleshooting故障诊断](kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md)
+
+* openshift docs
+  * [openshift origin 3.11 在线安装](openshift-docs/2019-07-02-openshift311-origin在线部署.md)
+  * [template]()
 
 * docker相关文档
   * [dockerfile 书写注意](docker-docs/2017-08-10-dockerfile-notes.md)
   * [dockerfile examples](docker-docs/2017-08-10-dockerfile-examples.md)
   * [dockerfile 命令](docker-docs/2017-07-19-dockerfile-command.md)
 
-* openshift docs
-  * [openshift origin 3.11 在线安装](openshift-docs/2019-07-02-openshift311-origin在线部署.md)
-  * [template]()
 ----
 
 * [Last part without title]()

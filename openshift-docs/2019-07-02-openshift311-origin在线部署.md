@@ -295,6 +295,20 @@ ansible-playbook -i inventory/hosts playbooks/deploy_cluster.yml
 ### ansible-playbook -i inventory/hosts playbooks/adhoc/uninstall.yml ###
 ```
 
+确认部署结果
+```bash
+oc get node 
+oc get pod --all-namespaces
+
+// 设置密码，用户名密码都是 admin
+htpasswd -b /etc/origin/master/htpasswd admin admin;   #这个命令每个master节点都要做
+oc adm policy add-cluster-role-to-user cluster-admin admin;   #master1 执行即可
+
+// 如果有其他用户，多次执行，再通过oc admin赋权
+htpasswd -b /etc/origin/master/htpasswd <usre_name> <user_passwd>
+
+```
+
 #### 4. 部署FAQ，异常处理
 1. 部署报错 Install docker excluder - yum
 
@@ -335,3 +349,5 @@ Failure summary:
 解决方法：
 因为装metrics需要
 yum install java-1.8.0-openjdk-headless python-passlib 
+
+
