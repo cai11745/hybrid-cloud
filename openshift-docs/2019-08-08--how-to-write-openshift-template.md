@@ -11,14 +11,13 @@ template是某个资源或者某些资源的组合，资源是指deploymentconfi
 
 这是发布时选择template的页面
 ![openshift-template-web.png](../image/openshift-template-web.png) 
-这是mariadb配置参数页面
+例如，这是mariadb配置参数页面
 ![openshift-template-mariadb.png](../image/openshift-template-web-mariadb.png) 
 
 openshift 已经提供了一些开箱即用的template，包含了 jboss,openjdk,nginx,php,mysql,mongo,postgres,mariadb...（openshift企业版）  
 因为上面有些中间件是红帽的企业版，所以openshift社区版不包含（比如jboss,amq），template总数会少一些，不过这都没关系，看完这篇我们可以自己做哈。  
 这些template位于一个名称为openshift的project下，此project下的template都是，能被所有project 看到。其他project下的是隔离的。  
-
-以下通过几个使用template的场景，由简入难，演示如何创建及使用template，template内容解读。
+#### 以下通过几个使用template的场景，由简入难，演示如何创建及使用template，template内容解读。
 1. 通过已有docker镜像发布应用，包含deploymentconfig，service，route
 2. 制作基于nfs 的pv pvc持久化存储模板，通过模板发布pv pvc，并可以将他挂载到第一步发布的应用
 3. 通过openshift s2i，实现源码编译自动发布springlcoud微服务应用
