@@ -1,0 +1,97 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  template: application-deploy-from-image
+message: Your application has been created in your project.
+  The route addr is ${HOSTNAME_HTTP}  # 应用发布完成后的提示信息，可以用来写应用访问地址，数据库的访问信息之类，建议完善。
+metadata:
+  annotations: # annotations 里面的都是非必备项
+    description: An example template, you can deploy application with docker image. For more information about
+      using this template, see https://github.com/jboss-openshift/application-templates. # template 被选中时候的初始描述
+    iconClass: icon-rh-tomcat  # 模板的图标，库在这 https://rawgit.com/openshift/openshift-logos-icon/master/demo.html
+    openshift.io/display-name: Application deploy from image  # 如果设置了这项，这个template在web上显示的名称是这个，不再是metadata.name内容
+    openshift.io/provider-display-name: Red Hat, Inc.  #自定义，展示在发布页
+    tags: tomcat,tomcat8,java # 自定义，会展示在发布页面，非必备项。需要注意如果带有hide字段,则不在web页面展示
+    template.openshift.io/support-url: https://github.com/cai11745/k8s-ocp-yaml/blob/master/openshift-docs/2019-08-08--how-to-write-openshift-template.md
+  name: deploy-from-image
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The web server's http port.
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    ports:
+    - port: ${{APPLICATION_PORT}}
+      targetPort: ${{APPLICATION_PORT}}
+    selector:
+      deploymentConfig: ${APPLICATION_NAME}
+- apiVersion: v1
+  id: ${APPLICATION_NAME}-http
+  kind: Route
+  metadata:
+    annotations:
+      description: Route for application's http service.
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    host: ${HOSTNAME_HTTP}
+    to:
+      name: ${APPLICATION_NAME}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    replicas: ${APPLICATION_REPLICAS}
+    selector:
+      deploymentConfig: ${APPLICATION_NAME}
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: ${APPLICATION_NAME}
+          deploymentConfig: ${APPLICATION_NAME}
+        name: ${APPLICATION_NAME}
+      spec:
+        containers:
+        - image: ${APPLICATION_IMAGE}
+          name: ${APPLICATION_NAME}
+          ports:
+          - containerPort: ${{APPLICATION_PORT}}
+            name: http
+            protocol: TCP
+    triggers:
+    - type: ConfigChange
+parameters:
+- description: The name for the application.
+  displayName: Application Name
+  name: APPLICATION_NAME
+  required: true
+  value: app
+- description: The application image name. ex. tomcat:8.5
+  displayName: Docker image.
+  name: APPLICATION_IMAGE
+  required: true
+  value: dockerhub.azk8s.cn/library/tomcat:9.0
+- description: 'Custom hostname for http service route.  Leave blank for default hostname,
+    e.g.: <application-name>-<project>.<default-domain-suffix>'
+  displayName: Custom http Route Hostname
+  name: HOSTNAME_HTTP
+- description: How many pods do you want.
+  displayName: Num of pod.
+  name: APPLICATION_REPLICAS
+  required: true
+  value: "1"
+- description: Application port. ex tomcat 8080, mysql 3306 ...
+  displayName: Application port.
+  name: APPLICATION_PORT
+  required: true
+  value: "8080"
