@@ -7,14 +7,14 @@ message: Your application has been created in your project.
 metadata:
   annotations: # annotations 里面的都是非必备项
     description: An example template, you can deploy application with docker image. For more information about
-      using this template, see https://github.com/jboss-openshift/application-templates. # template 被选中时候的初始描述
+      using this template, see https://github.com/cai11745/k8s-ocp-yaml/blob/master/openshift-docs/2019-08-08--how-to-write-openshift-template.md. # template 被选中时候的初始描述
     iconClass: icon-rh-tomcat  # 模板的图标，库在这 https://rawgit.com/openshift/openshift-logos-icon/master/demo.html
     openshift.io/display-name: Application deploy from image  # 如果设置了这项，这个template在web上显示的名称是这个，不再是metadata.name内容
     openshift.io/provider-display-name: Red Hat, Inc.  #自定义，展示在发布页
     tags: tomcat,tomcat8,java # 自定义，会展示在发布页面，非必备项。需要注意如果带有hide字段,则不在web页面展示
     template.openshift.io/support-url: https://github.com/cai11745/k8s-ocp-yaml/blob/master/openshift-docs/2019-08-08--how-to-write-openshift-template.md
   name: deploy-from-image
-objects:
+objects:  # 以下为资源集合，可以添加各种支持的资源类型，每-apiVersion 就是一个，可以是dc，configmap，imagestream等
 - apiVersion: v1
   kind: Service
   metadata:
@@ -25,8 +25,8 @@ objects:
     name: ${APPLICATION_NAME}
   spec:
     ports:
-    - port: ${{APPLICATION_PORT}}
-      targetPort: ${{APPLICATION_PORT}}
+    - port: ${{APPLICATION_PORT}}   # 注意此处若采用变量，需双大括号。双大括号可以把'parameters'传递参数中的双引号去掉。
+      targetPort: ${{APPLICATION_PORT}}   # 注意此处若采用变量，需双大括号
     selector:
       deploymentConfig: ${APPLICATION_NAME}
 - apiVersion: v1
@@ -49,7 +49,7 @@ objects:
       application: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
   spec:
-    replicas: ${APPLICATION_REPLICAS}
+    replicas: ${APPLICATION_REPLICAS}  # 注意此处若采用变量，需双大括号
     selector:
       deploymentConfig: ${APPLICATION_NAME}
     strategy:
@@ -62,25 +62,25 @@ objects:
         name: ${APPLICATION_NAME}
       spec:
         containers:
-        - image: ${APPLICATION_IMAGE}
+        - image: ${APPLICATION_IMAGE}  
           name: ${APPLICATION_NAME}
           ports:
-          - containerPort: ${{APPLICATION_PORT}}
+          - containerPort: ${{APPLICATION_PORT}}  # 注意此处若采用变量，需双大括号
             name: http
             protocol: TCP
     triggers:
     - type: ConfigChange
-parameters:
+parameters:  #以下信息将显示在web页面，通过页面把参数传递到上面的object中。
 - description: The name for the application.
   displayName: Application Name
-  name: APPLICATION_NAME
-  required: true
-  value: app
+  name: APPLICATION_NAME   #对应上面object里调用的变量，把值传递上去。
+  required: true   #表示必填项
+  value: app   #默认值
 - description: The application image name. ex. tomcat:8.5
   displayName: Docker image.
   name: APPLICATION_IMAGE
   required: true
-  value: dockerhub.azk8s.cn/library/tomcat:9.0
+  value: dockerhub.azk8s.cn/library/tomcat:9.0   #默认镜像，可以换成其他任意想发布的服务，记得下面的端口需要同步修改。
 - description: 'Custom hostname for http service route.  Leave blank for default hostname,
     e.g.: <application-name>-<project>.<default-domain-suffix>'
   displayName: Custom http Route Hostname
@@ -89,7 +89,7 @@ parameters:
   displayName: Num of pod.
   name: APPLICATION_REPLICAS
   required: true
-  value: "1"
+  value: "1"  #此处需双引号。上面调用的时候再用双大括号去掉引号。
 - description: Application port. ex tomcat 8080, mysql 3306 ...
   displayName: Application port.
   name: APPLICATION_PORT
