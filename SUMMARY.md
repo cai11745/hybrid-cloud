@@ -17,7 +17,7 @@
 
 * Openshift独有resource
   * [route]()
-  * [template]()
+  * [template模板解读](openshift-docs/2019-08-08--how-to-write-openshift-template.md)
 
 * kubernetes docs
   * [kubernetes 1.14 离线安装](kubernetes-docs/2019-04-19-kubernetes-1.14-install-offline.md) 
@@ -30,7 +30,7 @@
 
 * openshift docs
   * [openshift origin 3.11 在线安装](openshift-docs/2019-07-02-openshift311-origin在线部署.md)
-  * [template]()
+  
 
 * docker相关文档
   * [dockerfile 书写注意](docker-docs/2017-08-10-dockerfile-notes.md)

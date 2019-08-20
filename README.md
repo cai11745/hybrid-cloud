@@ -1,13 +1,12 @@
-# Kubernetes & Openshift yaml 解读 及部署实施记录
+### Kubernetes & Openshift yaml 解读 及部署实施记录
 
 * 记录在学习及项目实施中用到的k8s及openshift yaml文件，做一些解读。 及部署实施记录。
 * gitbook页面有搜索，可以快速定位到自己需要的内容。
 
-## [gitbook阅读地址点我](https://misa.gitbook.io/k8s-ocp-yaml/)
-## [kubernetes openshift troubleshooting故障诊断 点我](./kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md)
+#### [gitbook阅读地址点我](https://misa.gitbook.io/k8s-ocp-yaml/)
+#### [kubernetes openshift troubleshooting故障诊断 点我](./kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md)
 ---
-
-## 联系方式
+#### 联系方式
 * 邮箱: 3162003@qq.com
 * 微信: misa_cf
 * QQ  : 3162003
@@ -32,7 +31,7 @@
 
 * Openshift独有resource
   * [route未完成]()
-  * [template未完成]()
+  * [template模板解读](openshift-docs/2019-08-08--how-to-write-openshift-template.md)
 
 * kubernetes docs
   * [kubernetes 1.14 离线安装](kubernetes-docs/2019-04-19-kubernetes-1.14-install-offline.md) 
@@ -45,7 +44,7 @@
 
 * openshift docs
   * [openshift origin 3.11 在线安装](openshift-docs/2019-07-02-openshift311-origin在线部署.md)
-  * [template未完成]()
+
 
 * docker相关文档
   * [dockerfile 书写注意](docker-docs/2017-08-10-dockerfile-notes.md)
