@@ -55,7 +55,7 @@ metadata:
     iconClass: icon-rh-tomcat  # 模板的图标，库在这 https://rawgit.com/openshift/openshift-logos-icon/master/demo.html
     openshift.io/display-name: Application deploy from image  # 如果设置了这项，这个template在web上显示的名称是这个，不再是metadata.name内容
     openshift.io/provider-display-name: Red Hat, Inc.  #自定义，展示在发布页
-    tags: tomcat,tomcat8,java # 自定义，会展示在发布页面，非必备项。需要注意如果带有hide字段,则不在web页面展示
+    tags: tomcat,tomcat8,java # 自定义，会展示在发布页面，非必备项。需要注意如果带有hidden字段,则不在web页面展示
     template.openshift.io/support-url: https://github.com/cai11745/k8s-ocp-yaml/blob/master/openshift-docs/2019-08-08--how-to-write-openshift-template.md
   name: deploy-from-image
 objects:  # 以下为资源集合，可以添加各种支持的资源类型，每-apiVersion 就是一个，可以是dc，configmap，imagestream等
