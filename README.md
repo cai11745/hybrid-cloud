@@ -34,6 +34,7 @@
   * [template模板解读](openshift-docs/2019-08-08--how-to-write-openshift-template.md)
 
 * kubernetes docs
+  * [kubernetes 1.16 单机版在线安装](kubernetes-docs/ 2019-10-14-kubernetes-1.16-install-online.md)
   * [kubernetes 1.14 离线安装](kubernetes-docs/2019-04-19-kubernetes-1.14-install-offline.md) 
   * [kubernetes dashboard 免密登陆](kubernetes-docs/2018-11-20-kubernetes-dashboard-enable-http.md)
   * [kubernetes1.10 install offline](kubernetes-docs/2018-04-07-kubernetes-1.10-install-offline.md)
@@ -41,6 +42,7 @@
   * [kubernetes1.9 HA install online](kubernetes-docs/2018-04-04-kubernetes-1.9-HA-install-online.md)
   * [helm install](kubernetes-docs/2018-05-02-install-helm.md)
   * [k8s openshift troubleshooting故障诊断](kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md)
+ 
 
 * openshift docs
   * [openshift origin 3.11 在线安装](openshift-docs/2019-07-02-openshift311-origin在线部署.md)
