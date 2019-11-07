@@ -34,7 +34,7 @@
   * [template模板解读](openshift-docs/2019-08-08--how-to-write-openshift-template.md)
 
 * kubernetes docs
-  * [kubernetes 1.16 单机版在线安装](kubernetes-docs/ 2019-10-14-kubernetes-1.16-install-online.md)
+  * [kubernetes 1.16 单机版在线安装](kubernetes-docs/2019-10-14-kubernetes-1.16-install-online.md)
   * [kubernetes 1.14 离线安装](kubernetes-docs/2019-04-19-kubernetes-1.14-install-offline.md) 
   * [kubernetes dashboard 免密登陆](kubernetes-docs/2018-11-20-kubernetes-dashboard-enable-http.md)
   * [kubernetes1.10 install offline](kubernetes-docs/2018-04-07-kubernetes-1.10-install-offline.md)
