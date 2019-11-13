@@ -6,9 +6,20 @@ description:
 ---
 
 
-prometheus 当前已经成为当前k8s的标配监控方案。
+prometheus 当前已经成为k8s的主流监控方案。具备集群资源监控、服务监控、告警与一体，具备较强的扩展性与集成能力。
 
+扩展性：可以通过多个prometheus 采集多个不同区域的数据，使用联邦集群技术在一个prometheus上进行汇聚与展示。
 
+集成能力：目前支持： Java， JMX， Python， Go，Ruby， .Net， Node.js等等语言的客户端SDK，基于这些SDK可以快速让应用程序纳入到Prometheus的监控当中，或者开发自己的监控数据收集程序。
+
+我们常用于k8s的prometheus并不单单只有这一组件
+export: 采集client数据并暴露，因为prometheus服务端是采取的pull方式主动获取数据
+prometheus：定期从数据源拉取数据，然后将数据持久化到磁盘
+grafana：展示面板，将prometheus中的数据通过面板图形化更友好的方式展示
+alertmanager: 告警配置
+
+**架构图**
+![prometheus-all](../image/prometheus-all.png)
 ### 安装部署
 
 k8s：1.14
@@ -75,7 +86,10 @@ grafana 初始用户密码 admin/admin
 prometheus 页面
 ![prometheus-dashboard](../image/prometheus-dashboard.png)
 
-### 
+### 监控Ingress controller
+
+Ingress controller 作为整个集群流量的入口，有必要对他的流量做一定监控与展示
+
 
 
 
