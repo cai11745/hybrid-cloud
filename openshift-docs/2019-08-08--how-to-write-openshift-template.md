@@ -11,13 +11,17 @@ template 是一些资源的组合，资源是指 openshift中 应用、存储、
 即通过可视化页面实现了中间件、微服务、数据库等应用快速发布。可以理解为应用商店的一种。
 
 这是发布时选择template的页面
+
 ![openshift-template-web.png](../image/openshift-template-web.png) 
+
 例如，这是mariadb配置参数页面
+
 ![openshift-template-mariadb.png](../image/openshift-template-web-mariadb.png) 
 
 openshift 已经提供了一些开箱即用的template，包含了 jboss,openjdk,nginx,php,mysql,mongo,postgres,mariadb...（openshift企业版）  
 因为上面有些中间件是红帽的企业版，所以openshift社区版不包含（比如jboss,amq），template总数会少一些，不过这都没关系，看完这篇我们可以自己做哈。  
 这些template位于一个名称为openshift的project下。 
+
 #### 以下通过几个使用template的场景，由简入难，演示如何创建及使用template，template内容解读。
 1. 通过已有docker镜像发布应用，包含deploymentconfig，service，route
 2. 制作基于nfs 的pv pvc持久化存储模板，通过模板发布pv pvc，并可以将他挂载到第一步发布的应用
@@ -27,6 +31,7 @@ openshift 已经提供了一些开箱即用的template，包含了 jboss,openjdk
 ### 场景一 通过已有docker镜像发布应用
 已经制作好了应用镜像，通过openshift web 页面实现发布，并能够访问
 如果你想做一个属于自己的template，建议基于现有模板来修改  
+
 #### 获取template文件及内容解读
 获取template文件，这是我写好的例子，以下通过这个栗子说明template的组成及用法
 ```bash
@@ -155,12 +160,15 @@ template.template.openshift.io/deploy-from-image created
 ![openshift-template-deploy-1.png](../image/openshift-template-deploy-1.png) 
 
 会出现选择 template 页面，选 openshift project，因为上一步我们把 template 导入到了这个 project 下。内容比较多，我们通过关键词 image 检索下，注意此处显示的名称是 metadata.annotations.openshift.io/display-name 而不是 metadata.name
+
 ![openshift-template-deploy-2.png](../image/openshift-template-deploy-2.png) 
 
 这页显示的是 template 介绍信息，都是yaml文件中 metadata.annotations 部分的内容
+
 ![openshift-template-deploy-3.png](../image/openshift-template-deploy-3.png) 
 
 发布服务，名字自己定义，镜像用自己仓库的或者公网的，这里换成httpd，注意下面端口也要改成相应的。
+
 ![openshift-template-deploy-4.png](../image/openshift-template-deploy-4.png) 
 
 发布成功后，页面会显示 template yaml 文件中 message 部分定义的内容。
@@ -221,15 +229,21 @@ wget https://raw.githubusercontent.com/cai11745/k8s-ocp-yaml/master/yaml-file/te
 #### 使用template 创建基于nfs的持久卷
 web页面，选"Add to Project" -> "Select from Project", 在openshift project下 检索 nfs
 填写nfs server 地址，路径
+
 ![openshift-template-deploy-nfs-1.png](../image/openshift-template-deploy-nfs-1.png) 
+
 在 storage 查看状态，Bound 表示pv pvc关联上了
+
 ![openshift-template-deploy-nfs-2.png](../image/openshift-template-deploy-nfs-2.png) 
+
 #### 把存储卷挂载到应用中
 
 Application -> deployment, 选择场景一发布的应用app-ex，右上角 "Actions" -> "Add Storage"
+
 ![openshift-template-deploy-nfs-3.png](../image/openshift-template-deploy-nfs-3.png)
 
 挂载存储后容器会重建，完成后进入终端 df -h 确认挂载情况
+
 ![openshift-template-deploy-nfs-4.png](../image/openshift-template-deploy-nfs-4.png)
 
 
