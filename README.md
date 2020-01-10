@@ -49,6 +49,9 @@
   * [dockerfile examples](docker-docs/2017-08-10-dockerfile-examples.md)
   * [dockerfile 命令](docker-docs/2017-07-19-dockerfile-command.md)
 
+* 容器云监控prometheus
+  * [安装部署与监控ingress-controller](prometheus/2019-10-22-prometheus-1-install-and-metricsIngress.md)
+  
 #### 联系方式
 * 邮箱: 3162003@qq.com
 * 微信: misa_cf
