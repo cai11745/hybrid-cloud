@@ -1,17 +1,11 @@
-### Kubernetes & Openshift yaml 解读 及部署实施记录
+### Kubernetes & Openshift 实施与学习记录
 
-* 记录在学习及项目实施中用到的k8s及openshift yaml文件，做一些解读。 及部署实施记录。
+* 记录在学习及项目实施中用到的k8s/openshift相关技术，做一些解读 。
 * gitbook页面有搜索，可以快速定位到自己需要的内容。
 
 #### [gitbook阅读地址点我](https://misa.gitbook.io/k8s-ocp-yaml/)
 #### [kubernetes openshift troubleshooting故障诊断 点我](./kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md)
 ---
-#### 联系方式
-* 邮箱: 3162003@qq.com
-* 微信: misa_cf
-* QQ  : 3162003
-
-有问题可以联系我或者github提issue  
 
 目录
 * yaml文件书写注意项
@@ -55,3 +49,9 @@
   * [dockerfile examples](docker-docs/2017-08-10-dockerfile-examples.md)
   * [dockerfile 命令](docker-docs/2017-07-19-dockerfile-command.md)
 
+#### 联系方式
+* 邮箱: 3162003@qq.com
+* 微信: misa_cf
+* QQ  : 3162003
+
+有问题可以联系我或者github提issue  
