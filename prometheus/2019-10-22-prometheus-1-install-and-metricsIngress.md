@@ -96,12 +96,15 @@ alertmanager-main   NodePort   10.103.41.177   <none>        9093:32113/TCP   22
 grafana 初始用户密码 admin/admin
 
 内置了很多默认面板
+
 ![grafana-all-dashboard](../image/grafana-all-dashboard.png)
 
 集群信息面板
+
 ![grafana-cluster](../image/grafana-cluster.png)
 
 prometheus 页面
+
 ![prometheus-dashboard](../image/prometheus-dashboard.png)
 
 ### 监控Ingress controller
@@ -264,13 +267,16 @@ kubectl -n monitoring get prometheus -o yaml
 3. 验证
 prometheus页面查看status -- configration
 如果看不到，检查配置文件及上面注解1
+
 ![prometheus-ingress-configuration](../image/prometheus-ingress-configuration.png)
 
 prometheus页面查看status -- target
 如果能看到configration，target里面没有，查看FAQ1，可能权限问题
+
 ![prometheus-ingress-target](../image/prometheus-ingress-target.png)
 
 prometheus页面测试查询
+
 ![prometheus-ingress-graph](../image/prometheus-ingress-graph.png)
 
 **grafana添加面板**
@@ -281,6 +287,7 @@ prometheus页面测试查询
 https://github.com/kubernetes/ingress-nginx/tree/dfa7f10fc9691a3be90fd30cb458b64b617ef440/deploy/grafana/dashboards
 
 已经获取到数据，现在没有应用使用ingress负载，很多地方还是空的
+
 ![grafana-ingress-1](../image/grafana-ingress-1.png)
 
 可以创建一条ingress来访问prometheus
@@ -324,6 +331,7 @@ spec:
 即可以通过域名方式访问到三个服务
 
 同时，grafana页面上ingress的数据也会刷新
+
 ![grafana-ingress-2](../image/grafana-ingress-2.png)
 
 ### 各服务角色与功能
