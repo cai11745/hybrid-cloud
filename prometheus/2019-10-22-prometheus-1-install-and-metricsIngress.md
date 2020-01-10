@@ -19,7 +19,9 @@ prometheus 当前已经成为k8s的主流监控方案。具备集群资源监控
 - alertmanager: Prometheus根据PromQL定义的规则，产生一条告警，告警的后续处理流程由AlertManager进行管理。在AlertManager中我们可以与邮件，Slack等等内置的通知方式进行集成，也可以通过Webhook自定义告警处理方式。AlertManager即Prometheus体系中的告警处理中心。
 
 **架构图**
+
 ![prometheus-all](../image/prometheus-all.png)
+
 ### 安装部署
 
 k8s：1.16
@@ -112,6 +114,7 @@ ingress-controller 最新部署参照这边，也可以按照下面步骤
 https://github.com/kubernetes/ingress-nginx/blob/master/docs/deploy/index.md
 
 **ingress-controller 部署**
+
 ```bash
 curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.26.2/deploy/static/mandatory.yaml > ingress-nginx-0.26.2-prometheus-hostnetwork.yaml
 
@@ -141,6 +144,7 @@ curl 172.16.160.33:10254/metrics
 ```
 
 **prometheus-k8s sa 权限调整**
+
 monitoring namespace 下的 prometheus-k8s 这个service account 权限不足，只有default，kube-system，monitoring 这三个的endponits,service 权限。
 
 具体原因见FAQ1
@@ -156,6 +160,7 @@ kubectl apply -f https://raw.githubusercontent.com/cai11745/k8s-ocp-yaml/master/
 ```
 
 **ingress监控部署**
+
 监控ingress需要完成两点，一是ingress提供相关的prometheus查询接口（上一步已确认），二创建一条ServiceMonitor规则来指定ingress的数据采集规则。
 
 如果还需要gragana展示，则需在gragana添加对应面板。
@@ -269,6 +274,7 @@ prometheus页面测试查询
 ![prometheus-ingress-graph](../image/prometheus-ingress-graph.png)
 
 **grafana添加面板**
+
 以上，prometheus已经能够获取到ingress数据，下一步就是添加grafana面板，更好的展示数据
 
 在grafana页面点+， import，导入nginx.json
@@ -321,9 +327,11 @@ spec:
 ![grafana-ingress-2](../image/grafana-ingress-2.png)
 
 ### 各服务角色与功能
+
 monitoring 这个namespace下的pod都分别承担了什么角色，如何创建出来的，以及prometheus中容器、节点的数据如何获取、数据来源，下一篇写。
 
 ### FAQ 
+
 #### 1. 创建ServiceMonitor后prometheus页面没有看到相应target
 
 在prometheus 页面 status configuration 已经查询到ingress配置，但是target里面没有ingress
@@ -390,3 +398,4 @@ https://github.com/cai11745/k8s-ocp-yaml/blob/master/prometheus/2019-10-22-prome
 
 参考内容：
 https://yunlzheng.gitbook.io/prometheus-book/
+https://github.com/kubernetes/ingress-nginx/tree/master/deploy
