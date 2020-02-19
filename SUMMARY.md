@@ -28,6 +28,7 @@
   * [kubernetes1.9 HA install online](kubernetes-docs/2018-04-04-kubernetes-1.9-HA-install-online.md)
   * [helm install](kubernetes-docs/2018-05-02-install-helm.md)
   * [k8s openshift troubleshooting故障诊断](kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md)
+  * [k8s CIS benchmark 安全基准测试](kubernetes-docs/2020-02-17-cis-benchmark-for-kubernetes.md)
 
 * openshift docs
   * [openshift origin 3.11 在线安装](openshift-docs/2019-07-02-openshift311-origin在线部署.md)
