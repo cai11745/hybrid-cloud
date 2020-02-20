@@ -13,14 +13,14 @@ kubernetes CIS基准下载地址。当前版本为v1.5.0，下载的pdf显示rel
 
 https://www.cisecurity.org/benchmark/kubernetes/
 
-或者通过我共享的百度盘下载：
+或者通过我共享的百度盘下载：  
 链接: https://pan.baidu.com/s/1bI2gb4klSMRw082XpsdTWA 提取码: 69ye
 
 ### kubernetes CIS基准内容
-文件内容一共几大块
-master节点的服务 apiserver，controller manager，scheduler，etcd
-node节点的服务 kubelet, proxy
-安全控制: RBAC, pod policy, network policy
+文件内容一共几大块  
+master节点的服务 apiserver，controller manager，scheduler，etcd  
+node节点的服务 kubelet, proxy  
+安全控制: RBAC, pod policy, network policy  
 
 服务组件会涉及数据文件权限及参数配置。
 
@@ -96,21 +96,25 @@ kube-bench --benchmark cis-1.5 run --targets master,node,etcd,policies
 - [PASS]和[FAIL]表示测试已成功运行，并且通过或失败。
 - [WARN]表示此测试需要进一步关注，例如，它是需要手动运行的测试。
 - [INFO]是不需要进一步操作的信息输出。
+
 ![master-result](../image/kube-bench/master-result1.png)
 
 对于FAIL和WARN的项目，在测试结果 Remediations 中都会给出修改建议。
 ![master-result-Remediations](../image/kube-bench/master-result-Remediations.png)
 
 测试结果的判断规则：
+
 首先每个测试项目的参数在 /etc/kube-bench/cfg/cis-1.5/
+
 config.yaml        etcd.yaml    node.yaml
 controlplane.yaml  master.yaml  policies.yaml
 
 测试项中有几个关键词
-        type: "manual"
-        scored: true
-        scored: false       
-          test_items:
+
+type: "manual"  
+scored: true  
+scored: false    
+test_items:
 
 - 如果测试项为 type：manual，则始终会生成WARN（因为用户必须手动运行它）
 - 如果测试项为 scored：true，而kube-bench无法运行测试，则会生成“fail”（因为该测试尚未通过，并且作为“得分”测试，如果未通过，则必须视为失败）。
@@ -124,24 +128,26 @@ controlplane.yaml  master.yaml  policies.yaml
 - 自动项目，不算分项，成功了PASS，失败了WARN
 
 在我的k8s环境中，执行 kube-bench master，总的结果如下：
+
 可以根据实际环境需要进行配置文件调整，不是所有的FAIL都是需要修复的。
-== Summary ==
-40 checks PASS
-14 checks FAIL
-11 checks WARN
-0 checks INFO
+
+== Summary ==  
+40 checks PASS  
+14 checks FAIL  
+11 checks WARN  
+0 checks INFO  
 
 #### 问题修复
 针对测试中出现的FAIL和WARN进行修复，修复方法在测试脚本的输出信息中都有提示。
 
-比如这几条关于审计日志：
-[FAIL] 1.2.22 Ensure that the --audit-log-path argument is set (Scored)
-[FAIL] 1.2.23 Ensure that the --audit-log-maxage argument is set to 30 or as appropriate (Scored)
-[FAIL] 1.2.24 Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate (Scored)
+比如这几条关于审计日志：  
+[FAIL] 1.2.22 Ensure that the --audit-log-path argument is set (Scored)  
+[FAIL] 1.2.23 Ensure that the --audit-log-maxage argument is set to 30 or as appropriate (Scored)  
+[FAIL] 1.2.24 Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate (Scored)  
 [FAIL] 1.2.25 Ensure that the --audit-log-maxsize argument is set to 100 or as appropriate (Scored)
 
 
-给出的修复建议是：
+给出的修复建议是：  
 1.2.22 Edit the API server pod specification file /etc/kubernetes/manifests/kube-apiserver.yaml
 on the master node and set the --audit-log-path parameter to a suitable path and
 file where you would like audit logs to be written, for example:
@@ -161,7 +167,7 @@ on the master node and set the --audit-log-maxsize parameter to an appropriate s
 For example, to set it as 100 MB:
 --audit-log-maxsize=100
 
-kubernetes官网的参数说明:
+kubernetes官网的参数说明:  
 https://kubernetes.io/zh/docs/reference/command-line-tools-reference/kube-apiserver/
 ```bash
   --audit-log-path string 
@@ -193,7 +199,7 @@ https://kubernetes.io/zh/docs/reference/command-line-tools-reference/kube-apiser
 
 #### 排除测试项目
 如果一些项目不适合我们的场景或者不适合我们当前版本，比如 
-1.2.21 1.3.2 1.4.1 三个测试项，是要求 /etc/kubernetes/manifests/ 目录下的三个文件kube-controller-manager.yaml
+1.2.21 1.3.2 1.4.1 三个测试项，是要求 /etc/kubernetes/manifests/ 目录下的三个文件  kube-controller-manager.yaml
 kube-apiserver.yaml  kube-scheduler.yaml ，需要设置参数 --profiling=false
 
 通过查询官网，这个参数在1.16 k8s，kube-scheduler 已经弃用，apiserver和controller-manager没有说弃用。 所以我们把 1.4.1 这项忽略掉。
@@ -203,9 +209,9 @@ https://v1-16.docs.kubernetes.io/zh/docs/reference/command-line-tools-reference/
 --profiling
 弃用: 通过 Web 界面主机启用配置文件：port/debug/pprof/
 
-修改以忽略测试项的方法是：
-cd /etc/kube-bench/cfg/cis-1.5
-编辑 master.yaml  找到 1.4.1 
+修改以忽略测试项的方法是：  
+cd /etc/kube-bench/cfg/cis-1.5  
+编辑 master.yaml  找到 1.4.1   
 在id下面加一行参数
 
 ```bash
@@ -236,10 +242,10 @@ cd /etc/kube-bench/cfg/cis-1.5
 
 最终结果，可以根据实际环境需要进行配置文件调整，不是所有的FAIL都是需要修复的。
 
-== Summary ==
-44 checks PASS
-14 checks FAIL
-10 checks WARN
+== Summary ==  
+44 checks PASS  
+14 checks FAIL  
+10 checks WARN  
 13 checks INFO
 
 
