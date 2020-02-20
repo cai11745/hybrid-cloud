@@ -250,7 +250,7 @@ cd /etc/kube-bench/cfg/cis-1.5
 
 
 ### 参考文档
-https://github.com/aquasecurity/kube-bench
+https://github.com/aquasecurity/kube-bench  
 https://github.com/freach/kubernetes-security-best-practice/blob/master/README.md
 
 
