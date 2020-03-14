@@ -34,6 +34,8 @@
   * [openshift origin 3.11 在线安装](openshift-docs/2019-07-02-openshift311-origin在线部署.md)
   * [openshift 对接AD域作为用户系统](openshift-docs/2019-09-24-openshift311-AD.md) 
   * [openshift jenkins slave pod 自定义模板](openshift-docs/2019-11-13-openshift3.11-jenkins-slave-pod-template.md)
+ * [openshift 4.3 离线安装--DHCP方式](ocp4/2020-02-25-openshift4.3-install-offline-dhcp.md)
+
 
 * docker相关文档
   * [dockerfile 书写注意](docker-docs/2017-08-10-dockerfile-notes.md)
