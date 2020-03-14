@@ -46,3 +46,7 @@
 ----
 
 * [Last part without title]()
+
+**扫一扫，关注微信公众号，不迷路，实时分享容器平台技术。**
+
+<div align="center"><img width="300" height="300" src="./image/gongzhonghao.jpeg"/></div>

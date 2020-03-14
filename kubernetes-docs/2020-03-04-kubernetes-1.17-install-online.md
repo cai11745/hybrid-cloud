@@ -1,30 +1,32 @@
 ---
 layout: post
-title:  centos7.6 kubernetes/k8s 1.16在线安装
+title:  centos7.6 kubernetes/k8s 1.17在线安装
 category: kubernetes
 description: 
 ---
 
-记录笔记本环境单节点部署。
+记录自己esxi虚拟化环境部署，1master 1node 
 操作系统： Centos 7.6 mini install
-kubernetes： 1.16
+kubernetes： 1.17
 
 ### 环境准备
 
 |主机名|IP| 配置|
 |----|----|----|
-|master/node|172.16.160.33| 2C 8G|
-
-设置主机名为master  时区
+|master|192.168.2.31| 2C 8G|
+|node1|192.168.2.32| 6C 24G|
+设置主机名为master/node1  时区
 ```
 timedatectl set-timezone Asia/Shanghai  #都要执行
-hostnamectl set-hostname k8s
+hostnamectl set-hostname master  #第一台
+hostnamectl set-hostname node1   #第二台
 ```
 在/etc/hosts中添加解析
 ```
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-172.16.160.33 k8s
+192.168.2.31 master
+192.168.2.32 node1
 ```
 关闭seliux以及firewalld
 ```
@@ -79,7 +81,7 @@ gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
 EOF
 ```
 ```bash
-yum install -y kubelet-1.16.1 kubeadm-1.16.1 kubectl-1.16.1
+yum install -y kubelet-1.17.3 kubeadm-1.17.3 kubectl-1.17.3
 ```
 kubeadm是集群部署工具
 
@@ -96,10 +98,12 @@ kubelet的k8s集群每个节点的docker管理服务，设置为开机自启动
 swapoff -a
 vi /etc/fstab   #swap一行注释
 ```
+
 ```
 cat <<EOF >  /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
 EOF
 sysctl --system
 ```
@@ -111,16 +115,17 @@ sysctl --system
 ```bash
 kubeadm config images list
 
-k8s.gcr.io/kube-apiserver:v1.16.1
-k8s.gcr.io/kube-controller-manager:v1.16.1
-k8s.gcr.io/kube-scheduler:v1.16.1
-k8s.gcr.io/kube-proxy:v1.16.1
+k8s.gcr.io/kube-apiserver:v1.17.3
+k8s.gcr.io/kube-controller-manager:v1.17.3
+k8s.gcr.io/kube-scheduler:v1.17.3
+k8s.gcr.io/kube-proxy:v1.17.3
 k8s.gcr.io/pause:3.1
-k8s.gcr.io/etcd:3.3.15-0
-k8s.gcr.io/coredns:1.6.2
+k8s.gcr.io/etcd:3.4.3-0
+k8s.gcr.io/coredns:1.6.5
+
 ```
 
-根据需要的版本，直接拉取国内镜像，并修改tag
+根据需要的版本，直接拉取国内镜像，并修改tag，每台都跑一下脚本，node可以不要apiserver，controller，scheduler,etcd这几个
 
 ```bash
 # vim kubeadm.sh
@@ -130,10 +135,10 @@ k8s.gcr.io/coredns:1.6.2
 ## 使用如下脚本下载国内镜像，并修改tag为google的tag
 set -e
 
-KUBE_VERSION=v1.16.1
+KUBE_VERSION=v1.17.3
 KUBE_PAUSE_VERSION=3.1
-ETCD_VERSION=3.3.15-0
-CORE_DNS_VERSION=1.6.2
+ETCD_VERSION=3.4.3-0
+CORE_DNS_VERSION=1.6.5
 
 GCR_URL=k8s.gcr.io
 ALIYUN_URL=registry.cn-hangzhou.aliyuncs.com/google_containers
@@ -166,7 +171,7 @@ sh ./kubeadm.sh
 init命令注意要指定版本，和pod范围
 
 ```
-kubeadm init --kubernetes-version=v1.16.1 --pod-network-cidr=10.244.0.0/16
+kubeadm init --kubernetes-version=v1.17.3 --pod-network-cidr=10.244.0.0/16
 ```
 
 执行提示的命令，保存kubeconfig
@@ -197,6 +202,22 @@ master节点默认不可部署pod
 root@master1:/var/lib/kubelet# kubectl taint node k8s node-role.kubernetes.io/master-
 node "k8s" untainted
 ```
+### kubeadm join 加入计算节点
+node节点执行master 节点kubeadm init 之后的提示信息
+
+```bash
+kubeadm join 192.168.2.31:6443 --token 2pfhoi.vxundi9v57xg7bad \
+>     --discovery-token-ca-cert-hash sha256:8dc8647fcbc96b5e2ec2c952c285c08402fe4aabcfa97ec87cf0d77d768ba888 
+```
+
+完成后，在master 执行 kubectl get node 查看节点
+
+```bash
+[root@master ~]# kubectl get node                                          
+NAME     STATUS     ROLES    AGE     VERSION
+master   NotReady   master   2m50s   v1.17.3
+node1    NotReady   <none>   18s     v1.17.3
+```
 
 ### 部署calico网络
 
@@ -204,7 +225,7 @@ k8s支持多种网络方案，flannel，calico，openvswitch
 
 此处选择calico
 ```
-wget https://docs.projectcalico.org/v3.9/manifests/calico.yaml
+wget https://docs.projectcalico.org/v3.12/manifests/calico.yaml
 
 修改 CALICO_IPV4POOL_CIDR 的IP段和上面kubeadm init 一致
 10.244.0.0/16
@@ -212,14 +233,12 @@ wget https://docs.projectcalico.org/v3.9/manifests/calico.yaml
 kubectl create -f calico.yaml
 
 网络就绪后，节点的状态会变为ready
-[root@k8s ~]# kubectl get node
-NAME   STATUS   ROLES    AGE   VERSION
-k8s    Ready    master   21m   v1.16.1
+[root@master ~]# kubectl get node
+NAME     STATUS   ROLES    AGE   VERSION
+master   Ready    master   10h   v1.17.3
+node1    Ready    <none>   10h   v1.17.3
+
 ```
-
-### 部署prometheus 
-
-
 
 ### 部署k8s ui界面，dashboard
 

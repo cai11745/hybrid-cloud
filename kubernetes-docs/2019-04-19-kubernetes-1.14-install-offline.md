@@ -86,6 +86,12 @@ cd kube114-rpm
 yum  localinstall *.rpm  进行安装，yum命令可以自动解决依赖
 ```
 
+kubelet设置为开机自启动  
+
+```bash
+ systemctl enable kubelet
+```
+
 关闭swap，及修改iptables，不然后面kubeadm会报错
 ```
 swapoff -a

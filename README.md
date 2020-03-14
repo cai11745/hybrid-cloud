@@ -3,6 +3,11 @@
 * 记录在学习及项目实施中用到的k8s/openshift相关技术，做一些解读 。
 * gitbook页面有搜索，可以快速定位到自己需要的内容。
 
+**扫一扫，关注微信公众号，不迷路，实时分享容器平台技术。**
+
+<div align="center"><img width="300" height="300" src="./image/gongzhonghao.jpeg"/></div>
+
+
 #### [gitbook阅读地址点我](https://misa.gitbook.io/k8s-ocp-yaml/)
 #### [kubernetes openshift troubleshooting故障诊断 点我](./kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md)
 ---
