@@ -1,0 +1,15 @@
+
+{
+"id": "worker-1",
+
+"name": "OCP 4 – Compute node #0",
+
+"profile": "cptnod",
+
+"selector": {
+
+"mac": "00:0c:29:da:5c:92"
+
+}
+
+}

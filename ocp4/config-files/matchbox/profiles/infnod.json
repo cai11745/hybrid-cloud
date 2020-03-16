@@ -1,0 +1,40 @@
+{
+"id": "infnod",
+
+"name": "OCP 4 – Infrastructure Node",
+
+"ignition_id": "worker.ign",
+
+"boot": {
+
+"kernel": "/assets/rhcos-4.3.0-x86_64-installer-kernel",
+
+"initrd": [
+
+"/assets/rhcos-4.3.0-x86_64-installer-initramfs.img"
+
+],
+
+"args": [
+
+"ip=dhcp",
+
+"rd.neednet=1",
+
+"console=tty0",
+
+"console=ttyS0",
+
+"coreos.inst=yes",
+
+"coreos.inst.install_dev=sda",
+
+"coreos.inst.image_url=http://bastion.ocp4.example.com:8080/assets/rhcos-4.3.0-x86_64-metal.raw.gz",
+
+"coreos.inst.ignition_url=http://bastion.ocp4.example.com:8080/ignition?mac=${mac:hexhyp}"
+
+]
+
+}
+
+}
