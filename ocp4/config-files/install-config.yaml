@@ -1,0 +1,53 @@
+apiVersion: v1
+baseDomain: example.com
+compute:
+- hyperthreading: Enabled
+  name: worker
+  replicas: 0
+controlPlane:
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+metadata:
+  name: ocp4
+networking:
+  clusterNetworks:
+  - cidr: 10.254.0.0/16
+    hostPrefix: 24
+  networkType: OpenShiftSDN
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  none: {}
+pullSecret: '{"auths":{"registry.example.com:5000": {"auth": "cm9vdDpwYXNzd29yZA==","email": "you@example.com"}}}'
+sshKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC24BYgsRAKTm40fFIPV/0Rx1veBY5hNsCHf6X7sByLXBA3A7BkBR9UnnTtRHN6ONNajaX3ralWHDd7t9OzSPym/+27/6JGz3AcCuSu1G8ie3M+E6XaFvaptKyvv7ua+vI2xgwC1WZGRhtQAtzccjFo2+ZQijc8pqHtLSao3jB3szAc5wzQd2JUL7zJ/hppxMD4pkCu1COSdtLpQci8exL2Km837glElmKrpVzVvfjan+4BmO0R3h9H9Xf3KDBZB/A84OjsjnIy31tsF1RWuAt1MwYwaGHDXGInG3bnnchXx5SRHpdFmtdVXvgY1S/M0WF9oPedjo++C8rRft41NfaJ root@bastion.example.com'
+additionalTrustBundle: |
+  -----BEGIN CERTIFICATE-----
+  MIIDaTCCAlGgAwIBAgIJAPe1Z6c1QYJSMA0GCSqGSIb3DQEBCwUAMEsxHTAbBgNV
+  BAMMFHJlZ2lzdHJ5LmV4YW1wbGUuY29tMR0wGwYDVQQKDBRNeSBDb21wYW55IE5h
+  bWUgTFRELjELMAkGA1UEBhMCVVMwHhcNMjAwMzA5MTczMzQyWhcNMjEwMzA5MTcz
+  MzQyWjBLMR0wGwYDVQQDDBRyZWdpc3RyeS5leGFtcGxlLmNvbTEdMBsGA1UECgwU
+  TXkgQ29tcGFueSBOYW1lIExURC4xCzAJBgNVBAYTAlVTMIIBIjANBgkqhkiG9w0B
+  AQEFAAOCAQ8AMIIBCgKCAQEAvfdF5YwZdsFzI7/UUMGmipWXjRre9rk1ljXqYQRz
+  CLi/a/GTXllxsdV81d3CEKIUm25PqrLT7wt9c+Pe9DP/dtzcYTAixQJzkhYyrqIw
+  BhJrQ4YQauGObMnR87yAMnHDQFyIItZz3t0uMjtYHCX1kUPuAgYBD2E+Yfm0eQ7Y
+  dHi4/TNbopP2PEc396wiPfYA5cDLQteKPT9dZXpFov3SNxNAfVJj+WsHz/D84Q5y
+  qeJ5Y9CmlF9FuLkrERtlPRa5ppFxeV0+ggAFMc5haGBW6gP6CBes3zObuXNBGtCk
+  9szUB5sgvopBbTalBBJG4iDhqHITktAWhFxvVU3JYH9qMwIDAQABo1AwTjAdBgNV
+  HQ4EFgQUAOAciw0dFDFje2Dx0MrSeR5kyNUwHwYDVR0jBBgwFoAUAOAciw0dFDFj
+  e2Dx0MrSeR5kyNUwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAtbi2
+  v4CO06xCwFEy1o6E8hWa3jy31O++pdsHziqlUnGnztz4FYWj7oXJbvfTnsFJN0jI
+  ImYuDdXHZGHRX4Mcc5le/4J/RF+sWZijdspVfMIfS7EUUES8Pfya82SzPehgF/oa
+  sQF+gOTir4cohhy+5rtDVn4nlwhfhMTjlahXq8K3dBxgbnMZoz+kkbhEsYyE0b2n
+  ACNAqWTCvfmU73IrXUpUaX+vwPs15wAfQl2FZyPM3cSAlU34WOxXga+SD2hqJmj2
+  cklGvWAwXAeo0BIDgU5nABoJT5++WVQ43H6BBOshrhhNzpLzDIUaEDQPkSVIw72B
+  TRMFn8AEaDdTyUY2Bg==
+  -----END CERTIFICATE-----
+imageContentSources:
+- mirrors:
+  - registry.example.com:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+  - registry.example.com:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+
