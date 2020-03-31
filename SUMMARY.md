@@ -44,6 +44,9 @@
 
 * 容器云监控prometheus
   * [安装部署与监控ingress-controller](prometheus/2019-10-22-prometheus-1-install-and-metricsIngress.md)
+
+* 中间件
+  * [kafka的安装与开启ACL权限控制](middleware/2020-03-30-kafka-install.md)
   
 ----
 
