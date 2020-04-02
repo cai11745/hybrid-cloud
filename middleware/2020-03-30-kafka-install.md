@@ -277,6 +277,6 @@ password="admin";
 
 然后就可以连接了，可以看到topic信息等。。。
 
-![master-result](../image/kafka-tool.png)
+![kafkatool](../image/kafka-tool.png)
 
 也可以使用yahoo的kafka-manager 来连接，开源的，github有
