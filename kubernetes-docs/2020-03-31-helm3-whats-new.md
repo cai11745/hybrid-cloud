@@ -11,13 +11,13 @@ Helm把Kubernetes资源(比如deployments、services或 ingress等) 打包到一
 通过chart仓库可用来存储和分享chart。  
 Helm使发布可配置参数，支持发布应用配置的版本管理，简化了Kubernetes部署应用的版本控制、打包、发布、删除、更新等操作。
 
-** 可以简单理解为： 应用商店 **
+**可以简单理解为： 应用商店**
 
 ### helm3 变化
 
 helm3 与helm2的变动很大，主要有几处  
 
-1. 去除Tiller 和 helm serve
+#### 1. 去除Tiller 和 helm serve
 现在helm命令通过kubeconfig 直接操作k8s集群，类似于kubectl  
 Helm使用与kubectl上下文相同的访问权限，也无需再使用helm init来初始化Helm  
 这点在helm部署和使用上方便了很多，也减少了服务发布可能遇到的因为tiller引起的异常
@@ -26,7 +26,7 @@ Helm使用与kubectl上下文相同的访问权限，也无需再使用helm init
 
 而且移除了 helm serve 的功能，不再
 
-1. 预定义仓库被移除，添加helm hub  
+#### 2. 预定义仓库被移除，添加helm hub  
 helm search 现在区分 repo 和hub  
 repo 是自己手动添加的源  
 比如官方的有稳定版和在建设的，还有ibm的
@@ -45,7 +45,7 @@ hub 是 helm 的中心库，各软件商需要在 hub 把应用更新到最新�
 
 `helm search hub mysql`
 
-3. Values 支持 JSON Schema 校验器
+#### 3. Values 支持 JSON Schema 校验器
 
 当我们运行 helm install 、 helm upgrade 、 helm lint 、 helm template 命令时，JSON Schema 的校验会自动运行，如果失败就会立即报错。
 
@@ -63,10 +63,10 @@ helm install mysqlll .
 Error: unable to build kubernetes objects from release manifest: error validating "": error validating data: ValidationError(Service.spec.ports[0].port): invalid type for io.k8s.api.core.v1.ServicePort.port: got "string", expected "integer"
 ```
 
-4. 代码复用 - Library Chart 支持
+#### 4. 代码复用 - Library Chart 支持
 Helm 3 中引入了一种新的 Chart 类型，名为 Library Chart 。它不会部署出一些具体的资源，只能被其他的 Chart 所引用，提高代码的可用复用性。当一个 Chart 想要使用该 Library Chart内的一些模板时，可以在 Chart.yaml 的 dependencies 依赖项中指定。
 
-5. requirements.yaml 被整合到了 Chart.yaml 中，但格式保持不变
+#### 5. requirements.yaml 被整合到了 Chart.yaml 中，但格式保持不变
 
 还有一些其他的功能，比如 helm test 等，不属于主要功能，且属于测试阶段，我还没有去尝试。
 
