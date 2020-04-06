@@ -40,9 +40,6 @@
   * [deployment,rc,rs控制器](application/2018-05-31-deployment-rc-rs.md)
   * [volume 容器存储](application/2018-05-31-volume.md)
   * [liveness readiness 健康检查](application/2018-07-05-livemess-readiness.md)
-  
-  * [rc未完成]()
-  * [Daemonset未完成]()
 
 * 存储(pv,pvc)
 
