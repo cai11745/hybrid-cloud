@@ -24,7 +24,7 @@ Helm使用与kubectl上下文相同的访问权限，也无需再使用helm init
 
 ![helm-v2-to-v3](../image/helm-v2-to-v3.png)
 
-而且移除了 helm serve 的功能，不再
+而且移除了 helm serve 的功能，不再本地提供chart仓库能力​
 
 #### 2. 预定义仓库被移除，添加helm hub  
 helm search 现在区分 repo 和hub  

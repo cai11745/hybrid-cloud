@@ -5,15 +5,14 @@ category: openshift，ocp4, operatorhub
 description: 
 ---
 
+openshift4 console 页面集成了operator管理，并支持构建私有的operator仓库。
 
-
-
-###
+本篇主要介绍在离线环境下如何构建一个私有的operator仓库。
 
 ocp4 console 页面，在 Operators -- OperatorHub 页面，看到一共有121个 operator, 前几天我看的时候还是30个，应该是联网自动下载了。因为其他朋友的文章里说离线部署初始应该是看到0个。  
 不过这都没关系，点开一个部署就会发现，没镜像，跑不起来。  
 
-![operatorhub-121](./images/operatorhub-1-121.png)
+![operatorhub-121](./images/operator-hub-trafik/operatorhub-1-121.png)
 
 以下记录如何手动添加一个operator 并能够成功运行，这样将能够帮助我们在离线环境下导入operator。
 
@@ -31,7 +30,7 @@ oc get operatorhub -o yaml
 
 然后 console 页面，operatorhub里面的内容都自动清空了。
 
-### 获取
+### 创建私有 operatorhub
 
 要获取默认OperatorSource的软件包列表，在可以联网的机器运行以下命令：
 
@@ -48,7 +47,8 @@ curl https://quay.io/cnr/api/v1/packages?namespace=certified-operators > certifi
 https://www.json.cn/
 
 
-导入一个traefik 试试，traefik 功能同ingress和ocp的router，用于应用流量的入口
+导入一个traefik 试试，traefik 功能同ingress和ocp的router，用于应用流量的入口  
+建议测试的弄个etcd，这个traefikee后面发布比较麻烦，还需要license
 
 ```bash
 [root@bastion operatorhub]# cat * |jq |grep traefikee -A 4
@@ -138,20 +138,31 @@ manifests/
 获取镜像，查看下 yaml 文件中定义的镜像，这个是dockerhub的镜像，我们需要把他下载来，推送到我们的私有仓库，并且在yaml文件中把image改成指向私有仓库
 
 ```bash
-~ grep image: -R * 
-manifests/traefikee-certified/6.0.0/clusterserviceversion.yaml:                image: containous/traefikee-operator:v0.4.1
-manifests/traefikee-certified/6.0.0/clusterserviceversion.yaml:                image: containous/traefikee-operator:v0.4.1
-manifests/traefikee-certified/6.0.0/customresourcedefinition.yaml:                      image: containous/traefikee-operator:v0.4.1
-manifests/traefikee-certified/6.0.0/customresourcedefinition.yaml:                      image: containous/traefikee-operator:v0.4.1
+~ cd manifests
+~ grep image -R *
+traefikee-certified/6.0.0/clusterserviceversion.yaml:            "image": "store/containous/traefikee:v2.0.0",
+traefikee-certified/6.0.0/clusterserviceversion.yaml:      - description: TraefikEE image to install
+traefikee-certified/6.0.0/clusterserviceversion.yaml:        displayName: image
+traefikee-certified/6.0.0/clusterserviceversion.yaml:        path: image
+traefikee-certified/6.0.0/clusterserviceversion.yaml:    mediatype: image/png
+traefikee-certified/6.0.0/clusterserviceversion.yaml:                image: containous/traefikee-operator:v0.4.1
+traefikee-certified/6.0.0/clusterserviceversion.yaml:                imagePullPolicy: IfNotPresent
+traefikee-certified/6.0.0/clusterserviceversion.yaml:                image: containous/traefikee-operator:v0.4.1
+traefikee-certified/6.0.0/clusterserviceversion.yaml:                imagePullPolicy: IfNotPresent
 ```
 
 拉取镜像，改tag，推到私有仓库，docker.io 拉不动换成azure的加速器试试，嗖嗖的  
 ```bash
 podman pull docker.io/containous/traefikee-operator:v0.4.1
+podman pull docker.io/store/containous/traefikee:v2.0.0
 # 或者 podman pull dockerhub.azk8s.cn/containous/traefikee-operator:v0.4.1
- podman tag dockerhub.azk8s.cn/containous/traefikee-operator:v0.4.1 registry.example.com:5000/containous/traefikee-operator:v0.4.1
+ podman tag docker.io/containous/traefikee-operator:v0.4.1 registry.example.com:5000/containous/traefikee-operator:v0.4.1
+
+ podman tag docker.io/store/containous/traefikee:v2.0.0 registry.example.com:5000/containous/traefikee:v2.0.0
+
  podman login https://registry.example.com:5000 -u root -p password 
  podman push registry.example.com:5000/containous/traefikee-operator:v0.4.1
+ podman  push registry.example.com:5000/containous/traefikee:v2.0.0 
 ```
 
 这边是 Azure China docker 加速器，有docker.io gcr.io quay.io 下载不了的镜像可以替换试试
@@ -166,28 +177,115 @@ podman pull docker.io/containous/traefikee-operator:v0.4.1
 
 ```bash
 # 修改yaml文件
-grep image -rl manifests/ |xargs sed -i 's/containous\/traefikee-operator\:v0.4.1/registry.example.com:5000\/containous\/traefikee-operator\:v0.4.1/g'
+grep image -rl . |xargs sed -i 's/containous\/traefikee-operator\:v0.4.1/registry.example.com:5000\/containous\/traefikee-operator\:v0.4.1/g'
+grep image -rl . |xargs sed -i 's/store\/containous\/traefikee:v2.0.0/registry.example.com:5000\/containous\/traefikee\:v2.0.0/g'
 
 # 确认下已经改过来了
- grep image: -R manifests/     
-manifests/traefikee-certified/6.0.0/clusterserviceversion.yaml:                image: registry.example.com:5000/containous/traefikee-operator:v0.4.1
-manifests/traefikee-certified/6.0.0/clusterserviceversion.yaml:                image: registry.example.com:5000/containous/traefikee-operator:v0.4.1
-manifests/traefikee-certified/6.0.0/customresourcedefinition.yaml:                      image: registry.example.com:5000/containous/traefikee-operator:v0.4.1
-manifests/traefikee-certified/6.0.0/customresourcedefinition.yaml:                      image: registry.example.com:5000/containous/traefikee-operator:v0.4.1
+ grep image -R * 
 ```
 
 在manifests 目录同级创建文件 custom-registry.Dockerfile
 ```bash
+FROM registry.redhat.io/openshift4/ose-operator-registry:v4.2.24 AS builder
 
+COPY manifests manifests
 
+RUN /bin/initializer -o ./bundles.db
+
+FROM registry.access.redhat.com/ubi7/ubi
+
+COPY --from=builder /registry/bundles.db /bundles.db
+COPY --from=builder /usr/bin/registry-server /registry-server
+COPY --from=builder /bin/grpc_health_probe /bin/grpc_health_probe
+
+EXPOSE 50051
+
+ENTRYPOINT ["/registry-server"]
+
+CMD ["--database", "bundles.db"]
 
 ```
 
+使用podman命令构建镜像，并推送仓库
+```bash
+~ ls
+custom-registry.Dockerfile  manifests
 
+podman build -f custom-registry.Dockerfile -t registry.example.com:5000/ocp4/custom-registry 
+podman push registry.example.com:5000/ocp4/custom-registry  
+```
 
+如果出现这个错误，是clusterserviceversion.yaml  customresourcedefinition.yaml这两个文件没有切割好  
+```bash
+FATA[0000] permissive mode disabled                      error="error loading manifests from directory: error checking provided apis in bundle : couldn't find containo.us/v1alpha1/Traefikee (traefikees) in bundle. found: map[]"
+```
 
+创建 my-operator-catalog.yaml 文件
+```bash
+# 文件内容
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: my-operator-catalog
+  namespace: openshift-marketplace
+spec:
+  displayName: My Operator Catalog
+  sourceType: grpc
+  image: registry.example.com:5000/ocp4/custom-registry  
 
+# 创建
+oc create -f my-operator-catalog.yaml
+```
 
+正常情况应该这样。如果不正常看下文
+```bash
+[root@bastion ~]# oc get pods -n openshift-marketplace
+NAME                                   READY   STATUS    RESTARTS   AGE
+marketplace-operator-554cffcfd-bgxcv   1/1     Running   12         23d
+my-operator-catalog-hmcdj              1/1     Running   4          10h
+[root@bastion ~]# oc get catalogsource -n openshift-marketplace
+NAME                  DISPLAY               TYPE   PUBLISHER   AGE
+my-operator-catalog   My Operator Catalog   grpc               10h
+[root@bastion ~]# oc get packagemanifest -n openshift-marketplace
+NAME                  CATALOG               AGE
+traefikee-certified   My Operator Catalog   10h
+```
+
+如果看不到新的pod，而且 packagemanifest 也没有，检查下这里面的pod是否正常，不正常就把pod删了重启下
+```bash
+oc -n openshift-operator-lifecycle-manager get pod
+```
+
+控制台 Operators - Installed Operators 里面 Package Server 的status "cannot update" ,不是issue。  
+https://access.redhat.com/solutions/4937981
+
+然后看console 控制台，traefik出来了，安装试试
+![trafik1.png](./images/operator-hub-trafik/trafik1.png)
+
+traefik 介绍页
+![trafik-install.png](./images/operator-hub-trafik/trafik-install.png)
+
+安装参数页，不要选default，会在所有项目下创建
+![trafik-install-2.png](./images/operator-hub-trafik/trafik-install-2.png)
+
+这样，traefik operator装完了，后面如果要安装traefik，需要添加一个  kind: Traefikee 的资源
+![traefik-installed.png](./images/operator-hub-trafik/traefik-installed.png)
+
+Installed Operators 页面点开 Traefikee Operator，选Create Instance，创建之后才是真正创建了traefik，这边发现我选择的是traefik的企业版，还要搞license及一堆初始化动作，页面有提示。 license 页面打不开。。。 看下pod已经有了，到此为止。
+
+```bash
+[root@bastion operatorhub]# oc -n kube-system get pod
+NAME                                  READY   STATUS     RESTARTS   AGE
+traefikee-controller-0                0/1     Pending    0          19m
+traefikee-operator-6bffccfc76-rkgmt   2/2     Running    0          22m
+traefikee-proxy-5f47757f84-rj66d      0/1     Init:0/1   0          19m
+```
+
+### 一次添加多个operator及版本
+
+一次添加多个的版本，在做镜像之前， manifests 目录里面可以写多个operator和多个版本，可以参照这个
+
+https://www.openshift.com/blog/openshift-4-3-managing-catalog-sources-in-the-openshift-web-console
 
 
 ###  参考文档
@@ -196,7 +294,6 @@ https://docs.openshift.com/container-platform/4.2/operators/olm-restricted-netwo
 https://www.cnblogs.com/ericnie/p/11777384.html?from=timeline&isappinstalled=0
 
 https://github.com/wangzheng422/docker_env/blob/master/redhat/ocp4/4.2.disconnect.operator.md
-
 
 
 关注我的github，后续更新会同步到github
