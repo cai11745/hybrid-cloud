@@ -80,19 +80,10 @@ oc get scheduler cluster -o yaml
 #### 
 
 
-### 问题记录
-#### 经常出现节点 not ready
+### 日志查看
 
-```bash
-[root@bastion ~]# oc get node
-NAME       STATUS     ROLES           AGE   VERSION
-master-0   NotReady   master,worker   23d   v1.16.2
-master-1   Ready      master,worker   23d   v1.16.2
-master-2   NotReady   master,worker   23d   v1.16.2
-worker-0   NotReady   worker          23d   v1.16.2
-worker-1   NotReady   worker          23d   v1.16.2
 
-```
+
 
 ###  参考文档
 https://blog.csdn.net/weixin_43902588/article/details/103433143
