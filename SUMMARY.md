@@ -5,7 +5,8 @@
   * [多资源对象写法](2018-05-29-multi-kind-list.md)
 
 * kubernetes docs
-  *  [metrics-server 轻量级监控](kubernetes-docs/2020-04-14-metrics-server.md)
+  * [k8s 利用subpathexpr处理日志落盘](kubernetes-docs/2020-04-23-volume-subpathexpr.md)
+  * [metrics-server 轻量级监控](kubernetes-docs/2020-04-14-metrics-server.md)
   * [helm3 全新版本带来了什么](kubernetes-docs/2020-03-31-helm3-whats-new.md)
   * [k8s openshift troubleshooting故障诊断](kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md)
   * [k8s CIS benchmark 安全基准测试](kubernetes-docs/2020-02-17-cis-benchmark-for-kubernetes.md)
