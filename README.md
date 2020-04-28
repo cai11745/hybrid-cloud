@@ -3,7 +3,7 @@
 * 记录在学习及项目实施中用到的k8s/openshift相关技术，做一些解读 。
 * gitbook页面有搜索，可以快速定位到自己需要的内容。
 
-**扫一扫，关注微信公众号，不迷路，实时分享容器平台技术。**
+**扫一扫，关注微信公众号，不迷路，实时分享容器平台技术。或者直接搜 老菜 **
 
 <div align="center"><img width="300" height="300" src="./image/gongzhonghao.jpeg"/></div>
 
@@ -18,6 +18,7 @@
   * [多资源对象写法](2018-05-29-multi-kind-list.md)
 
 * kubernetes docs
+  * [kubectl-debug插件及openshift debug模式](kubernetes-docs/2020-04-24-kubectl-debug-command.md)
   * [k8s 利用subpathexpr处理日志落盘](kubernetes-docs/2020-04-23-volume-subpathexpr.md)
   * [metrics-server 轻量级监控](kubernetes-docs/2020-04-14-metrics-server.md)
   * [helm3 全新版本带来了什么](kubernetes-docs/2020-03-31-helm3-whats-new.md)

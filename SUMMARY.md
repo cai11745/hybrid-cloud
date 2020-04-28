@@ -5,6 +5,7 @@
   * [多资源对象写法](2018-05-29-multi-kind-list.md)
 
 * kubernetes docs
+  * [kubectl-debug插件及openshift debug模式](kubernetes-docs/2020-04-24-kubectl-debug-command.md)
   * [k8s 利用subpathexpr处理日志落盘](kubernetes-docs/2020-04-23-volume-subpathexpr.md)
   * [metrics-server 轻量级监控](kubernetes-docs/2020-04-14-metrics-server.md)
   * [helm3 全新版本带来了什么](kubernetes-docs/2020-03-31-helm3-whats-new.md)
