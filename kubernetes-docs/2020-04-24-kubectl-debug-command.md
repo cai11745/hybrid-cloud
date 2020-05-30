@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  kubectl debug command
+title:  kubectl-debug插件及openshift debug模式
 category: kubernetes, debug
 description: 
 ---

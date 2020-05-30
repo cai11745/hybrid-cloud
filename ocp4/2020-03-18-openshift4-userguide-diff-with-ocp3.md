@@ -112,11 +112,13 @@ openshift-recovery-tools 脚本里 dl_etcdctl() 下载 etcdctl ，我们把他�
 etcdimg="quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:bc97106373ffddb5b7afe2a9010de54098c95545a654c7990b882680528c29e3"
 etcdctr=$(podman create "${etcdimg}")
 etcdmnt=$(podman mount "${etcdctr}")
-cp ${etcdmnt}/bin/etcdctl $ASSET_DIR/bin
+cp ${etcdmnt}/bin/etcdctl ./bin
 umount "${etcdmnt}"
 podman rm "${etcdctr}"
-$ASSET_DIR/bin/etcdctl version
+./bin/etcdctl version
 ```
+
+
 
 
 
