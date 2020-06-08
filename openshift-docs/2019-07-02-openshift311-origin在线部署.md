@@ -66,6 +66,10 @@ systemctl is-active docker
 # 修改selinux 
 setenforce 0
 
+# 关闭防火墙和设置selinux 为permissive
+systemctl disable firewalld;
+systemctl stop firewalld;
+
 # /etc/selinux/config  把SELINUX=enforcing 改为 SELINUX=permissive
 sed -i -e "s/^SELINUX=enforcing/SELINUX=permissive/" /etc/selinux/config
 
