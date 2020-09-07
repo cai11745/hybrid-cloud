@@ -57,3 +57,6 @@
 **扫一扫，关注微信公众号，不迷路，实时分享容器平台技术。**
 
 <div align="center"><img width="300" height="300" src="./image/gongzhonghao.jpeg"/></div>
+
+OCP4 用户手册（openshift4 相关内容将更新到隔壁目录）  
+https://github.com/cai11745/ocp4-userguide

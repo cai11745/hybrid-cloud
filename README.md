@@ -10,7 +10,7 @@
 
 #### [gitbook阅读地址点我](https://misa.gitbook.io/k8s-ocp-yaml/)
 #### [kubernetes openshift troubleshooting故障诊断 点我](./kubernetes-docs/2019-07-27-openshift-k8s-troubleshooting.md)
-#### OCP4 用户手册
+#### OCP4 用户手册（openshift4 相关内容将更新到隔壁目录）
 https://github.com/cai11745/ocp4-userguide
 ---
 
