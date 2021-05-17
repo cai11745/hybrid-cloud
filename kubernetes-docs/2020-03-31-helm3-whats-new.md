@@ -31,9 +31,17 @@ helm search 现在区分 repo 和hub
 repo 是自己手动添加的源  
 比如官方的有稳定版和在建设的，还有ibm的
 ```bash
+# 安装helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
+# 添加仓库
 helm repo add stable https://kubernetes-charts.storage.googleapis.com
 helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
 helm repo add ibmstable https://raw.githubusercontent.com/IBM/charts/master/repo/stable
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
 # 此处 repo add 的时候，如果名称已存在了也不提醒，居然直接覆盖了，是bug吧
 ```
 

@@ -35,6 +35,7 @@ https://github.com/cai11745/ocp4-userguide
   * [2018-05-02-helm2 install](kubernetes-docs/2018-05-02-install-helm.md)
 
 * openshift docs
+  * [2021-05-17-podman添加开机自启](openshift-docs/2021-05-17-podman-auto-restart-systemd.md)
   * [2020-06-23-openshift4.4 在线安装（包含allinone）静态ip](ocp4/2020-02-25-openshift4.4-install-online-staticIP-allinone.md)
   * [2020-02-25-openshift 4.3 离线安装--DHCP方式](ocp4/2020-02-25-openshift4.3-install-offline-dhcp.md)
   * [2020-03-18-openshift4 operatorhub 离线部署](ocp4/2020-03-18-openshift4-offline-install-operatorhub.md)
