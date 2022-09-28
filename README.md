@@ -2,6 +2,7 @@
 
 * 记录在学习及项目实施中用到的k8s/openshift相关技术，做一些解读 。
 * gitbook页面有搜索，可以快速定位到自己需要的内容。
+* 后续会添加一些公有云相关内容，所以名字改成了hybird-cloud。 2022-09-28
 
 **扫一扫，关注微信公众号，不迷路，实时分享容器平台技术。或者直接搜 老菜 **
 
@@ -15,6 +16,9 @@ https://github.com/cai11745/ocp4-userguide
 ---
 
 目录
+* 微软云Azure
+  * [2018-05-29-yaml文件来源](microsoft-azure/2022-10-18-create-azure-kubernetes-service.md)
+ 
 * yaml文件书写注意项
   * [2018-05-29-yaml文件来源](2018-05-29-yaml-from+write-note.md)
   * [2018-05-29-多资源对象写法](2018-05-29-multi-kind-list.md)
