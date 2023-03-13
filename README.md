@@ -16,9 +16,12 @@ https://github.com/cai11745/ocp4-userguide
 ---
 
 目录
-* 微软云Azure
-  * [2018-05-29-yaml文件来源](microsoft-azure/2022-10-18-create-azure-kubernetes-service.md)
- 
+* 微软云 Azure
+  * [Azure Portal 创建 k8s 集群](microsoft-azure/2022-10-18-create-azure-kubernetes-service.md)
+  * [Azure 容器镜像仓库](microsoft-azure/2022-10-30-create-container-registry.md)
+  * [Terraform 安装与简单demo](terraform/2023-02-24-terraform-install-and-simple-demo.md)
+  * [Terraform 创建 private AKS](terraform/2023-03-10-terraform-create-private-aks.md)
+
 * yaml文件书写注意项
   * [2018-05-29-yaml文件来源](2018-05-29-yaml-from+write-note.md)
   * [2018-05-29-多资源对象写法](2018-05-29-multi-kind-list.md)
