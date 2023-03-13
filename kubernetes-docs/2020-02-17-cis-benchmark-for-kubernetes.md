@@ -100,6 +100,7 @@ kube-bench --benchmark cis-1.5 run --targets master,node,etcd,policies
 ![master-result](../image/kube-bench/master-result1.png)
 
 对于FAIL和WARN的项目，在测试结果 Remediations 中都会给出修改建议。
+
 ![master-result-Remediations](../image/kube-bench/master-result-Remediations.png)
 
 测试结果的判断规则：
