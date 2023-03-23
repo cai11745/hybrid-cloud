@@ -490,22 +490,6 @@ az aks update-credentials \
 
 
 
-
-如果有报错
-(BadRequest) Updating service principal profile is not allowed on MSI cluster.
-Code: BadRequest
-Message: Updating service principal profile is not allowed on MSI cluster.
-
-```bash
-➜  ~ az aks update \            
-    --resource-group west-group \
-    --name aks-demo \
-     --enable-managed-identity
-
-
-
-
-
 #### 使用秘钥进行身份认证
 
 

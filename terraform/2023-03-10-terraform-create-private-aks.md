@@ -339,15 +339,15 @@ output "resource_group_name" {
 
 ![terraform-create-aks-2](../image/azure/terraform-create-aks-2.png)
 
-
-
 ### 参考文档
-https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples
-https://learn.microsoft.com/zh-cn/azure/developer/terraform/create-k8s-cluster-with-tf-and-aks
-https://github.com/Azure-Terraform/terraform-azurerm-kubernetes/blob/99935422a30971e3b385a3a9de2d585c59553a06/main.tf
+https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples  
+https://learn.microsoft.com/zh-cn/azure/developer/terraform/create-k8s-cluster-with-tf-and-aks  
+https://github.com/Azure-Terraform/terraform-azurerm-kubernetes/blob/99935422a30971e3b385a3a9de2d585c59553a06/main.tf  
+https://learn.microsoft.com/en-us/samples/azure-samples/private-aks-cluster-terraform-devops/private-aks-cluster-terraform-devops/  
+https://github.com/Azure-Samples/private-aks-cluster-terraform-devops/blob/main/terraform/  
+https://build5nines.com/terraform-create-an-aks-cluster/
 
-关注我的github，后续更新会同步上去
-
+关注我的github，后续更新会同步上去  
 https://github.com/cai11745/hybrid-cloud
 
 本次的tf文件在  
