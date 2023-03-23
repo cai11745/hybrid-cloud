@@ -3,10 +3,13 @@
 之前学习了terraform的安装与配置，并测试了两个简单场景，创建资源组、Vnet、虚拟机，主要为了熟悉命令的操作。  
 以下将我们使用的AKS场景，从命令创建的方式，改造成tf方式。更多的使用变量，具备可复用性，并使用 output 模块。
 
-AKS（Azure Kubernetes Service）的主要特性：
-1. 使用自定义subnet  
-2. 使用自定义托管标识，master 和 node  
-3. 开启 private cluster，即 k8s api 不暴露公网ip，只能通过 vnet 访问
+这个aks 集群模拟了真实生产环境，与网上普遍的文档有几个区别：  
+1. 使用了自定义subnet，通过azure portal 创建aks的时候，是不能自定义subnet的，必须通过命令行才可以  
+2. 自定义路由表，关联到subnet，创建一个 NAT gateway 关联到subnet，通过 NAT gateway 的public ip 使 node 访问公网，aks node 节点启动要拉取公网镜像
+3. aks 控制节点使用了自定义托管标识，原因见4。 node也可以采用自定义托管标识，可配可不配，未配置时系统会自动创建。
+4. 要给对路由表赋予 master托管标识 "Network Contributor" 权限。aks 部署过程需要去修改路由表，同时 aks cluster 对于 role assignment 要配置依赖。先赋权，后创建aks。
+5. 开启了 private cluster，k8s api 将不暴露公网地址，只能通过 vnet 访问k8s api
+6. 未开启RBAC。Azure AAD 未开启，开启需要设定默认管理组，可以在集群创建后再开，方便通过RBAC对AD账号授权
 
 ### 实现代码
 
@@ -33,14 +36,6 @@ provider "azurerm" {
 #### 创建 main.tf variables.tf
 
 main.tf 中定义要创建的资源，比如resourcegroup，vnet，role assignment，k8s cluster 等，为了复用性，对于资源组名称，vnet 地址池，k8s name 等放在 variables.tf 中定义  
-
-这个aks 集群模拟了真实生产环境，与网上普遍的文档有几个区别：  
-1. 使用了自定义subnet，通过azure portal 创建aks的时候，是不能自定义subnet的，必须通过命令行才可以  
-2. 自定义路由表，关联到subnet，创建一个 NAT gateway 关联到subnet，通过 NAT gateway 的public ip 使 node 访问公网，aks node 节点启动要拉取公网镜像
-3. aks 控制节点使用了自定义托管标识，原因见4。 node也可以采用自定义托管标识，可配可不配，未配置时系统会自动创建。
-4. 要给对路由表赋予 master托管标识 "Network Contributor" 权限。aks 部署过程需要去修改路由表，同时 aks cluster 对于 role assignment 要配置依赖。先赋权，后创建aks。
-5. 开启了 private cluster，k8s api 将不暴露公网地址，只能通过 vnet 访问k8s api
-6. 未开启RBAC。Azure AAD 未开启，开启需要设定默认管理组，可以在集群创建后再开，方便通过RBAC对AD账号授权
 
 ```bash
 [root@centos8 aks-private]# cat main.tf
