@@ -17,12 +17,14 @@ https://github.com/cai11745/ocp4-userguide
 
 目录
 * 微软云 Azure
-  * [Azure Portal 创建 k8s 集群](microsoft-azure/2022-10-18-create-azure-kubernetes-service.md)
-  * [Azure 容器镜像仓库](microsoft-azure/2022-10-30-create-container-registry.md)
-  * [基于Policy实现tag批量分配与继承](microsoft-azure/2023-03-08-Azure-policy-manage-tags.md)
-  * [Terraform 安装与简单demo](terraform/2023-02-24-terraform-install-and-simple-demo.md)
-  * [Terraform 创建 private AKS](terraform/2023-03-10-terraform-create-private-aks.md)
-  * [Terraform 离线环境使用](terraform/2023-03-22-terraform-offline-install.md)
+  * [2022-10-18-Azure Portal创建k8s集群](microsoft-azure/2022-10-18-create-azure-kubernetes-service.md)
+  * [2022-10-30-Azure容器镜像仓库](microsoft-azure/2022-10-30-create-container-registry.md)
+  * [2023-03-08-基于Policy实现tag批量分配与继承](microsoft-azure/2023-03-08-Azure-policy-manage-tags.md)
+  * [2023-02-24-Terraform 安装与简单demo](terraform/2023-02-24-terraform-install-and-simple-demo.md)
+  * [2023-03-10-Terraform 创建 private AKS](terraform/2023-03-10-terraform-create-private-aks.md)
+  * [2023-03-22-Terraform 离线环境使用](terraform/2023-03-22-terraform-offline-install.md)
+  * [2023-03-24-Terraform 踩坑记1-InternalOperationError](terraform/2023-03-24-terraform-debug-InternalOperationError.md)
+
 
 * yaml文件书写注意项
   * [2018-05-29-yaml文件来源](2018-05-29-yaml-from+write-note.md)
