@@ -1,10 +1,10 @@
 ### Kubernetes & Openshift 实施与学习记录
 
-* 记录在学习及项目实施中用到的k8s/openshift相关技术，做一些解读 。
+* 记录在学习及项目实施中用到的k8s/openshift/Azure/AI。
 * gitbook页面有搜索，可以快速定位到自己需要的内容。
-* 后续会添加一些公有云相关内容，所以名字改成了hybird-cloud。 2022-09-28
 
-**扫一扫，关注微信公众号，不迷路，实时分享容器平台技术。或者直接搜 老菜 **
+
+**扫一扫，关注微信公众号，不迷路，实时分享。或者直接搜 老菜 **
 
 <div align="center"><img width="300" height="300" src="./image/gongzhonghao.jpeg"/></div>
 
@@ -16,6 +16,9 @@ https://github.com/cai11745/ocp4-userguide
 ---
 
 目录
+* AI
+  * [2026-03-20-OpenClaw 告警分析实践](ai/2026-03-20-openclaw-alert-analysis.md)
+
 * 微软云 Azure
   * [2022-10-18-Azure Portal创建k8s集群](microsoft-azure/2022-10-18-create-azure-kubernetes-service.md)
   * [2022-10-30-Azure容器镜像仓库](microsoft-azure/2022-10-30-create-container-registry.md)
